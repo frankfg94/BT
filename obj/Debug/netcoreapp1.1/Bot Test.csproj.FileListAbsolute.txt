@@ -1,0 +1,11 @@
+C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\Bot Test\bin\Debug\netcoreapp1.1\Bot Test.deps.json
+C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\Bot Test\bin\Debug\netcoreapp1.1\Bot Test.runtimeconfig.json
+C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\Bot Test\bin\Debug\netcoreapp1.1\Bot Test.runtimeconfig.dev.json
+C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\Bot Test\bin\Debug\netcoreapp1.1\Bot Test.dll
+C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\Bot Test\obj\Debug\netcoreapp1.1\Bot Test.csprojResolveAssemblyReference.cache
+C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\Bot Test\obj\Debug\netcoreapp1.1\Bot Test.csproj.CoreCompileInputs.cache
+C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\Bot Test\obj\Debug\netcoreapp1.1\Bot Test.AssemblyInfo.cs
+C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\Bot Test\bin\Debug\netcoreapp1.1\Bot Test.pdb
+C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\Bot Test\obj\Debug\netcoreapp1.1\Bot Test.dll
+C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\Bot Test\obj\Debug\netcoreapp1.1\Bot Test.pdb
+C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\Bot Test\obj\Debug\netcoreapp1.1\Bot Test.AssemblyInfoInputs.cache

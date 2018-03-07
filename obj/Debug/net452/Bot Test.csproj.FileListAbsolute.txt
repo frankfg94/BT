@@ -1,0 +1,48 @@
+C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\Bot Test\bin\Debug\net452\Bot Test.exe.config
+C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\Bot Test\bin\Debug\net452\Bot Test.exe
+C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\Bot Test\bin\Debug\net452\Bot Test.pdb
+C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\Bot Test\bin\Debug\net452\Discord.Net.Commands.dll
+C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\Bot Test\bin\Debug\net452\Discord.Net.Core.dll
+C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\Bot Test\bin\Debug\net452\Discord.Net.Rest.dll
+C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\Bot Test\bin\Debug\net452\Discord.Net.Rpc.dll
+C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\Bot Test\bin\Debug\net452\Discord.Net.Webhook.dll
+C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\Bot Test\bin\Debug\net452\Discord.Net.WebSocket.dll
+C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\Bot Test\bin\Debug\net452\Microsoft.Extensions.DependencyInjection.dll
+C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\Bot Test\bin\Debug\net452\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\Bot Test\bin\Debug\net452\Newtonsoft.Json.dll
+C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\Bot Test\bin\Debug\net452\System.Collections.Immutable.dll
+C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\Bot Test\bin\Debug\net452\System.Interactive.Async.dll
+C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\Bot Test\bin\Debug\net452\System.Runtime.InteropServices.RuntimeInformation.dll
+C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\Bot Test\obj\Debug\net452\Bot Test.csprojResolveAssemblyReference.cache
+C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\Bot Test\obj\Debug\net452\Bot Test.exe.config
+C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\Bot Test\obj\Debug\net452\Bot Test.csproj.CoreCompileInputs.cache
+C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\Bot Test\obj\Debug\net452\Bot Test.AssemblyInfoInputs.cache
+C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\Bot Test\obj\Debug\net452\Bot Test.AssemblyInfo.cs
+C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\Bot Test\obj\Debug\net452\Bot Test.exe
+C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\Bot Test\obj\Debug\net452\Bot Test.pdb
+C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\Bot Test2\obj\Debug\net452\Bot Test.csprojResolveAssemblyReference.cache
+C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\Bot Test2\obj\Debug\net452\Bot Test.exe.config
+C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\Bot Test2\obj\Debug\net452\Bot Test.exe
+C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\Bot Test2\obj\Debug\net452\Bot Test.pdb
+C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\BT\obj\Debug\net452\Bot Test.csprojResolveAssemblyReference.cache
+C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\BT\obj\Debug\net452\Bot Test.exe.config
+C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\BT\obj\Debug\net452\Bot Test.exe
+C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\BT\obj\Debug\net452\Bot Test.pdb
+C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\BT\bin\Debug\net452\Bot Test.exe.config
+C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\BT\bin\Debug\net452\Bot Test.exe
+C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\BT\bin\Debug\net452\Bot Test.pdb
+C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\BT\bin\Debug\net452\Discord.Net.Commands.dll
+C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\BT\bin\Debug\net452\Discord.Net.Core.dll
+C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\BT\bin\Debug\net452\Discord.Net.Rest.dll
+C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\BT\bin\Debug\net452\Discord.Net.Rpc.dll
+C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\BT\bin\Debug\net452\Discord.Net.Webhook.dll
+C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\BT\bin\Debug\net452\Discord.Net.WebSocket.dll
+C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\BT\bin\Debug\net452\Microsoft.Extensions.DependencyInjection.dll
+C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\BT\bin\Debug\net452\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\BT\bin\Debug\net452\Newtonsoft.Json.dll
+C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\BT\bin\Debug\net452\System.Collections.Immutable.dll
+C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\BT\bin\Debug\net452\System.Interactive.Async.dll
+C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\BT\bin\Debug\net452\System.Runtime.InteropServices.RuntimeInformation.dll
+C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\BT\obj\Debug\net452\Bot Test.csproj.CoreCompileInputs.cache
+C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\BT\obj\Debug\net452\Bot Test.AssemblyInfoInputs.cache
+C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\BT\obj\Debug\net452\Bot Test.AssemblyInfo.cs
