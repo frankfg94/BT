@@ -211,6 +211,7 @@ namespace Bot_Test
                 Console.WriteLine(q.name + "|"+ q.content); 
             }
             Console.WriteLine("\nOK\n");
+            questions = MixedList;
         }
         /// <summary>
         /// Règle le volume général du Qcm

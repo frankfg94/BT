@@ -17,8 +17,6 @@ namespace Bot_Test
     public class Ping : ModuleBase<SocketCommandContext>
     {
 
-
-
         async Task<int> LoadDataAsync()
         {
             await Task.Delay(2000);
@@ -98,7 +96,7 @@ namespace Bot_Test
             await Context.Channel.SendMessageAsync("", false, EmbedBuilder);
         }
 
-        [Command("qcm2")]
+        [Command("qcm2  ")]
         public async Task qcm2()
         {
             var eb = new EmbedBuilder();
@@ -269,8 +267,7 @@ namespace Bot_Test
             eb.WithDescription(desc);
             eb2.WithDescription(desc2);
             await Context.Channel.SendMessageAsync("",false,eb);
-            await Context.Channel.SendMessageAsync("", false, eb2);
-
+            await Context.Channel.SendMessageAsync("", false, eb2); 
         }
 
 
@@ -286,6 +283,10 @@ namespace Bot_Test
                 {
                     QCMfound = true;
                     qcm.MixQuestions();
+                    qcm.MixQuestions();
+                    qcm.MixQuestions();
+                    qcm.MixQuestions();
+
                     await ReplyAsync("Le QCM : " + qcm.name + " a été mélangé avec succès");
                 }
             }
