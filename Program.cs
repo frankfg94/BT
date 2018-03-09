@@ -40,7 +40,7 @@ namespace Bot_Test
                 .AddSingleton(new AudioService())
                 .BuildServiceProvider();
 
-            string botToken = "Votre Token (a trouver dans la page d'information de votre bot dans la section developpeurs)";
+            string botToken = "Votre Token (a trouver dans la page d'information de votre bot dans la section developpeurs du site discord)";
 
 
             _client.Log += Log;
