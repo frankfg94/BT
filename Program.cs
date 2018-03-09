@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,9 +15,9 @@ namespace Bot_Test
     /// </summary>
     public class Program
     {
-       
+
         [STAThread] // semble ne rien faire
-        static void Main(string[] args) 
+        static void Main(string[] args)
         {
             Console.WriteLine("Starting ...\n");
             new Program().RunBotAsync().GetAwaiter().GetResult();
@@ -27,8 +28,9 @@ namespace Bot_Test
         private CommandService _commands;
         private IServiceProvider _services;
 
-        
-        
+
+        string[] lines = File.ReadAllLines("token.txt");
+        private string botToken;
 
         public async Task RunBotAsync()
         {
@@ -39,20 +41,16 @@ namespace Bot_Test
                 .AddSingleton(_commands)
                 .AddSingleton(new AudioService())
                 .BuildServiceProvider();
-
-            string botToken = "Mzc3OTM4NDY5MTgxMzI1MzIy.DWmSMg.4EYnSk9Xk8o_FtBt9 - zQ3WdHqQs";
-
+                
 
             _client.Log += Log;
-
+            Ping p = new Ping(_client);
             await RegistercommandAsync();
-            
             _client.UserJoined += AnnounceJoinedUser; //Check if userjoined
             _client.UserVoiceStateUpdated += VoiceUpdate;
-            
-            _client.ReactionAdded += Ping.ReactionParse;
+            _client.ReactionAdded += p.ReactionParse;
 
-            
+            botToken = lines[0];
             await _client.LoginAsync(TokenType.Bot, botToken);
 
             await _client.StartAsync();
@@ -63,6 +61,7 @@ namespace Bot_Test
             
             // event subscription  
         }
+
 
         public async Task VoiceUpdate(SocketUser user, SocketVoiceState state, SocketVoiceState state2) //welcomes New Players
         {
@@ -101,7 +100,6 @@ namespace Bot_Test
             Console.WriteLine(arg);
             return Task.FromResult(0);
         }
-
 
         public async Task RegistercommandAsync()
         {

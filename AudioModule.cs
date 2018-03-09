@@ -19,7 +19,6 @@ public class AudioModule : ModuleBase<ICommandContext>
     public AudioModule(AudioService service)
     {
         _service = service;
-        
     }
     
 

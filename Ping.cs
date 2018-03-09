@@ -22,6 +22,11 @@ namespace Bot_Test
             await Task.Delay(2000);
             return 42;
         }
+        private readonly DiscordSocketClient _client;
+        public Ping(DiscordSocketClient client)
+        {
+            _client = client;
+        }
 
         [Command("a")]
         public async Task ObtainTheFileAsync()
@@ -118,7 +123,7 @@ namespace Bot_Test
             await AddQcmReactions(m1);
             await AddQcmReactions(m2);
             await AddQcmReactions(m3);
-            await AddQcmReactions(m4);
+            await AddQcmReactions(m4);            
         }
 
         public async Task AddQcmReactions(IUserMessage msg)
@@ -338,9 +343,7 @@ namespace Bot_Test
             await ReplyAsync("Lancement du méga QCM! :fire: ");
             Qcm bigQcm = new Qcm();
             qcmList.Add(bigQcm);
-            bigQcm.name = "Premier qcm";
-            bigQcm.AddQuestion(QType.text);
-            bigQcm.AddQuestion(QType.text);
+            bigQcm.name = "a";
             bigQcm.AddQuestion(QType.text);
             bigQcm.AddQuestion(QType.image);
             await ReplyAsync("Questions ajoutées avec succès");
@@ -358,9 +361,9 @@ namespace Bot_Test
             }
             else
             {
+                await ReplyAsync("Aucune correspondance n'a été trouvée\n Voici la liste des noms repertoriés");
                 foreach (var qcm in qcmList)
                 {
-                    await ReplyAsync("Aucune correspondance n'a été trouvée\n Voici la liste des noms repertoriés");
                     s = s + "\n" + i + ". " + qcm.name;
                     i++;
                 }
@@ -429,27 +432,28 @@ namespace Bot_Test
             }
         }
 
-
-        public static async Task ReactionParse(Cacheable<IUserMessage, ulong> msg, ISocketMessageChannel msg2, SocketReaction socketReaction)
+        public async Task ReactionParse(Cacheable<IUserMessage, ulong> msg, ISocketMessageChannel msg2, SocketReaction socketReaction)
         {
-            await Console.Out.WriteLineAsync("Réaction détectée!! " + msg.Id);
-            // analyse de la réaction
-            // d'abord on cherche à savoir si au moins un qcm existe
-            if(qcmList != null)
+            ///*await*/ ReplyAsync("Pourquoi ce message ne veut-il pas s'envoyer????");
+            await Console.Out.WriteLineAsync("\n----------------------------------------------------------------------\nRéaction détectée!! " + msg.Id);
+            if (qcmList != null)
             {
-
-                //Prendre ID msg reaction , prendre symbole, verifier si alors si dernier element qcm
                 foreach(var qcm in qcmList)
                 {
                     if (qcm.HasStarted)
                     {
-                        if (socketReaction.Emote.Name == "🇦")
-                            Console.WriteLine("VICTORY");       
-                        else
+                        if (qcm.questionsID.Contains(socketReaction.MessageId) && !socketReaction.User.Value.IsBot)
                         {
-                            
-                            Console.WriteLine("Nom " + socketReaction.Emote.Name);
-                        }
+                            await Console.Out.WriteLineAsync("\nMessage cliqué appartient à liste des questions -->" );
+                            Console.ForegroundColor = ConsoleColor.Green;
+                            Console.Write("True\n");
+                            Console.ForegroundColor = ConsoleColor.White;
+                            await Console.Out.WriteLineAsync("On passe à Q"+ i);
+                            //await ReplyAsync("Reaction détectée");
+                            //await DisplayCitation();
+                            await StartQCM(qcm.name);
+                            i++;
+                        }       
                     }
                     
                 }
@@ -466,14 +470,13 @@ namespace Bot_Test
             }
         }
 
-
         public async Task<Qcm> GetQcm(string name)
         {
             foreach (Qcm qcm in qcmList)
             {
                 if (qcm.name.ToUpper() == name.ToUpper().Trim())
                 {
-                    Console.WriteLine("QCM détecté" + qcm.name);
+                    Console.WriteLine("QCM détecté :" + qcm.name);
                     return qcm;
                 }
             }
@@ -492,23 +495,43 @@ namespace Bot_Test
             }
         }
 
+
+        [Command("citation",RunMode = RunMode.Async)]
+        public async Task DisplayCitation()
+        {
+            var lines = File.ReadAllLines("citations.txt");
+            Random r = new Random();
+            var randomLineNumber = r.Next(0,lines.Length -1);
+            EmbedBuilder e = new EmbedBuilder();
+            e.WithTitle("Citation n°"  + randomLineNumber);
+            e.WithDescription(lines[randomLineNumber]);
+            await Context.Channel.SendMessageAsync("",false, e);
+        }
+
+
+        static int i = 1; 
         [Command("start", RunMode = RunMode.Async)]
         public async Task StartQCM([Remainder] string qcmName)
         {
             Qcm qcm = await GetQcm(qcmName);
-            qcm.HasStarted = true;
-            foreach (var q in qcm.questions)
+            IMessage msg;
+            if (!qcm.HasStarted)
             {
-                if(!q.answered)
+                Console.WriteLine("Affichage Q1" );
+                msg = await qcm.DisplayInDiscord(_client.GetChannel(414746672284041222) as ISocketMessageChannel, qcm.questions[0]);
+                qcm.questionsID.Add(msg.Id);
+                qcm.HasStarted = true;
+            }
+            else //Problème réussir à bloquer l'affichage Q2 cad ignorer le dernier smiley
+            { 
+               ISocketMessageChannel channel = _client.GetChannel(414746672284041222) as ISocketMessageChannel;
+                if (i < qcm.questions.Count)
                 {
-                    Console.WriteLine("Cette question n'a pas encore été affichée, on l'affiche");
-                    var msg = await DisplayInDiscord(q);
-                    // maintenant on laisse un delai pour répondre
-                    await CheckAnswer(msg, q);
+                    Console.WriteLine("On arrive à une question de type :" + qcm.questions[i].type);
+                    msg = await qcm.DisplayInDiscord(_client.GetChannel(414746672284041222) as ISocketMessageChannel, qcm.questions[i]);
+                    qcm.questionsID.Add(msg.Id);
                 }
-
-
-
+                else await channel.SendMessageAsync("Vous êtes arrivé au bout de ce QCM");
             }
         }
 
@@ -542,27 +565,11 @@ namespace Bot_Test
                 {
                     await ReplyAsync(" :exclamation:  Aucun QCM n'a pour le moment été crée");
                 }
-
             }
         }
 
 
-        public async Task<IUserMessage> DisplayInDiscord(Qcm.Question question)
-        {
-            if (question.type == QType.text)
-            {
-                EmbedBuilder eb = (EmbedBuilder)question.content;
-                Console.WriteLine("ok");
-                var msg = await Context.Channel.SendMessageAsync("DisplayInDiscord()", false, eb);
-                await AddQcmReactions(msg);
-                return msg;
-            }
-            else
-                await ReplyAsync("Questions de type : " + question.type + " pas encore gérées");
-
-
-            return null;
-        }
+     
 
         [Command("del", RunMode = RunMode.Async)]
         public async Task RemoveLastQuestion([Remainder] string qcmName)

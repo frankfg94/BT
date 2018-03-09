@@ -42,6 +42,7 @@ namespace Bot_Test
                 type = _type;
                 content = _content;
                 name = Qname;
+                
 
             }
 
@@ -61,7 +62,7 @@ namespace Bot_Test
 
         public List<Question> questions = new List<Question>();
 
-
+        public List<ulong> questionsID = new List<ulong>();
         /// <summary>
         /// Ajoute une question de type texte, image ou audio à la position indiquée, si aucune n'est précisée, la question sera rajoutée à la fin du Qcm
         /// </summary>
@@ -95,8 +96,8 @@ namespace Bot_Test
         public EmbedBuilder QcmTextSample()
         {
             var eb = new EmbedBuilder();
-            int a = n.Next(1, 20);
-            int b = n.Next(1, 20);
+            int a = n.Next(3, 20);
+            int b = n.Next(3, 20);
             result = a * b;
             eb.WithTitle("QCM basique de mathématiques\n" + a + " * " + b + " = ? ");
             eb.AddField("a) ", result);
@@ -106,6 +107,48 @@ namespace Bot_Test
             eb.WithColor(Color.DarkGreen);
             return eb;
         }
+
+        public async Task<IMessage> DisplayInDiscord(ISocketMessageChannel channel, Question question)
+        {
+            Console.WriteLine("Fonction d'affichage lancée");
+            IUserMessage msg;
+            if (question.type == QType.text)
+            {
+                EmbedBuilder eb = (EmbedBuilder)question.content;
+                msg = await channel.SendMessageAsync("DisplayInDiscord()", false, eb);
+                await AddQcmReactions(msg);
+            }
+            else
+            {
+                await Console.Out.WriteLineAsync("Pas de type texte");
+                 msg = await channel.SendMessageAsync("Questions de type : " + question.type + " pas encore gérées");
+                await AddQcmReactions(msg, true);
+            }
+            return msg;
+
+        }
+
+
+        public async Task AddQcmReactions(IUserMessage msg, bool skip = false)
+        {
+            if(!skip)
+            {
+                await msg.AddReactionAsync(new Emoji("🇦"));
+                await msg.AddReactionAsync(new Emoji("🇧"));
+                await msg.AddReactionAsync(new Emoji("🇨"));
+                await msg.AddReactionAsync(new Emoji("🇩"));
+            }
+            else
+            {
+                Console.WriteLine("AddQcmReactions --> replaceSingle != null (l132) --> Ajout smiley suivant");
+
+                // Problème, la flèche n'est pas reconnue
+                await msg.AddReactionAsync(new Emoji("🇦"));
+               // await msg.AddReactionAsync(new Emoji("➡🇦"));
+            }
+
+        }
+
 
         /// <summary>
         /// Supprime définitivement ce QCM
