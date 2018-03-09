@@ -40,7 +40,7 @@ namespace Bot_Test
                 .AddSingleton(new AudioService())
                 .BuildServiceProvider();
 
-            string botToken = "Mzc3OTM4NDY5MTgxMzI1MzIy.DWmSMg.4EYnSk9Xk8o_FtBt9 - zQ3WdHqQs";
+            string botToken = "Votre Token (a trouver dans la page d'information de votre bot dans la section developpeurs)";
 
 
             _client.Log += Log;
