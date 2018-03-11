@@ -3,5 +3,5 @@ Discord Bot
 Fonctionnalités : 
 - Jeu RoomKiller 
 - Test de personnalité 
-- Qcm standard 
+- Qcm avancé : audio, texte et image 
 - Blind Test
