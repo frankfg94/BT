@@ -200,7 +200,7 @@ namespace BT
                         ebListMultiple.Add(imgEb2.WithImageUrl(url2));
                         ebListMultiple.Add(imgEb3.WithImageUrl(url3));
                         ebListMultiple.Add(imgEb4.WithImageUrl(url4));
-                        q.name = "Lequel fs tableaux n'a pas été peint par Vermeer?";
+                        q.name = "Lequel de ces tableaux n'a pas été peint par Vermeer?"; // Ce qui est affiché trop de fois d'affilée
                         q.answer = "Vermeer";
                         break;
                     default:
