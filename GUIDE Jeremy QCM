@@ -1,0 +1,73 @@
+------------------------------------------------------------------------------------------------------------------------------------
+Exemple à modifier : ----------
+----------------------------
+
+
+
+
+DEBUT DE CODE
+                    case "Tank":
+                    
+                        url = "https://www.industrie-techno.com/mediatheque/5/4/4/000012445_imageArticlePrincipaleLarge.jpg";
+                        q.answer = "Un char d'assaut Polonais Futuriste";
+                        imgEb1.WithDescription(" a) Un prototype Polonais en construction \n b) Un char apparu dans le film Bladde Runner 2049  \n c) Un Fan-Art \n d) Un nouveau char américain");
+                        break;
+                        
+                    case "JeanneA":
+                    
+                        url = "http://www.musee-orsay.fr/typo3temp/zoom/tmp_828c5c0a84bf57e06bc87366dc30b237.gif";
+                        q.answer = "Jeanne D'Arc";
+                        imgEb1.WithDescription(" a) Une jeune paysanne priant pour son mari \nb) Jeanne D'Arc\n c) Fernande Olivier \n d) Camille Claudel");
+                        break;
+                        
+                    case "JeuneFillePerle":
+                    
+                        url = "https://cdn.radiofrance.fr/s3/cruiser-production/2016/05/5791f11c-4124-45b9-b493-2bd99aace836/738_meisje_met_de_parel.jpg"
+                        q.answer = "Vermeer";
+                        imgEb1.WithDescription(" a) Monet \n b) Vermeer \n c) Peeter de Hooch \n d) Van Gogh");
+                        imgEb1.WithTitle("Quel est l'auteur de ce tableau intitulé 'La jeune fille à la Perle'?");       // optionnel
+                        break;
+                        
+                    case "SpireDublin":
+             
+                        url = "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/E4324-Spire-of-Dublin.jpg/390px-E4324-Spire-of-Dublin.jpg";
+                        q.answer = "La Spire de Dublin";
+                        imgEb1.WithDescription(" a) La Spire de Dublin \n b) L'épine de Berlin \n c) Le pic de Berlin \n d) La Pointe de Dublin");
+                        imgEb1.WithTitle("Quel représente ce monument");                                                 // optionnel
+                        break;
+
+FIN DE CODE
+
+
+
+
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Mini-Manuel :        ---------
+-------------------------
+
+La création de questions se fait en 2 étapes:
+
+A) On copie-colle un bloc case par exemple "SpireDublin", en FIN DE CODE
+B) On modifie les variables présentées ci-dessous
+
+Variables Obligatoires :
+--------------------
+
+            1) url : Mettre url internet seulement de l'image 
+
+            2) q.answer : Nom de la bonne réponse
+
+            3) imgEb1.WithDescription(Description) : Liste des réponses possibles, écrire \n pour sauter une ligne
+
+Variable Optionnelle : 
+--------------------
+            
+            1) imgEb1.WithTitle(Titre de la question) : Remplacer le titre initial par le titre en paramètre
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
