@@ -164,7 +164,7 @@ namespace BT
                     case "SpireDublin":
                         imgEb1.WithTitle("Quel représente ce monument");
                         url = "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/E4324-Spire-of-Dublin.jpg/390px-E4324-Spire-of-Dublin.jpg";
-                        imgEb1.WithDescription(" a) La Spire de Dub lin \n b) L'épine de Berlin \n c) Le pic de Berlin \n d) La Pointe de Dublin");
+                        imgEb1.WithDescription(" a) La Spire de Dublin \n b) L'épine de Berlin \n c) Le pic de Berlin \n d) La Pointe de Dublin");
                         q.answer = "La Spire de Dublin";
                         break;
                     default:
