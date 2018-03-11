@@ -67,7 +67,8 @@ public class AudioModule : ModuleBase<ICommandContext>
                 
                 if (u.Username.ToUpper() == name.ToUpper() || u.Nickname.ToUpper() == name.ToUpper())
                 {
-                    await u.ModifyAsync(x => x.Nickname = "[MORT]" + u.Username);
+                    await u.ModifyAsync(x => 
+                    .Nickname = "[MORT]" + u.Username);
                     await ReplyAsync(":scream: " + u.Username + " vient de mourir!");
                     await _service.SendAudioAsync(Context.Guild,Context.Channel,@"C:/Users/gillioen/Desktop/death.wav");
                     

@@ -8,7 +8,7 @@ using Discord.Commands;
 using Discord.WebSocket;    
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Bot_Test   
+namespace BT   
 {
     /// <summary>
     /// Logique d'interaction pour MainWindow.xaml
@@ -41,13 +41,7 @@ namespace Bot_Test
                 .AddSingleton(_commands)
                 .AddSingleton(new AudioService())
                 .BuildServiceProvider();
-<<<<<<< HEAD
                 
-=======
-
-            string botToken = "Votre Token (a trouver dans la page d'information de votre bot dans la section developpeurs du site discord)";
-
->>>>>>> 52c4cf2f1da5c7f7788ccbc79a5e34c5fcda8a0c
 
             _client.Log += Log;
             Ping p = new Ping(_client);

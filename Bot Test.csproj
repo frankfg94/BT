@@ -20,15 +20,18 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="UserControl1.xaml.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="UserControl1.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Discord.Net" Version="1.0.2" />
     <PackageReference Include="FFmpeg.Nightly" Version="20180220.0.0" />
   </ItemGroup>
 
-  <ItemGroup>
-  </ItemGroup>
-
-  <ItemGroup>
-  </ItemGroup>
 
   <ItemGroup>
     <Reference Include="PresentationCore" />

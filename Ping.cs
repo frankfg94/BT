@@ -11,7 +11,7 @@ using System.Drawing;
 using System.Linq;
 using Discord.WebSocket;
 
-namespace Bot_Test
+namespace BT
 {
    
     public class Ping : ModuleBase<SocketCommandContext>
@@ -66,29 +66,10 @@ namespace Bot_Test
             }
         }
 
-
-        int result;
+        private int result;
         private Random n = new Random(Guid.NewGuid().GetHashCode());
         static bool responded = false;
 
-
-        [Command("qcm")]
-        public async Task Qcm()
-        {
-            var eb = new EmbedBuilder();
-            int a = n.Next(1, 20);
-            int b = n.Next(1, 9);
-            result = a * b;
-            responded = true;
-            eb.WithTitle("QCM basique de mathématiques");
-            eb.WithDescription(a + " * " + b + " = ?");
-            eb.AddField("a) ", result);
-            eb.AddField("b) ", (result - 1));
-            eb.AddField("c) ", (result + 1));
-            eb.AddField("d) ", (result + 3));
-            eb.WithColor(Discord.Color.DarkGreen);
-            await Context.Channel.SendMessageAsync("", false, eb);
-        }
 
         [Command("dice")]
         public async Task Dice([Remainder] int max = 6)
@@ -336,16 +317,27 @@ namespace Bot_Test
             }
         }
 
+        [Command("CreateAndStart", RunMode = RunMode.Async)]
+        public async Task CreateAndStart([Remainder] string name)
+        {
+            await BigQcm(name);
+            await StartQCM(name);
+        }
+
         [Command("BigQcm", RunMode = RunMode.Async)]
-        public async Task BigQcm()
+        public async Task BigQcm(string name = "a")
         {
             ISocketMessageChannel channel = Context.Channel;
             await ReplyAsync("Lancement du méga QCM! :fire: ");
             Qcm bigQcm = new Qcm();
             qcmList.Add(bigQcm);
-            bigQcm.name = "a";
+            bigQcm.name = name;
             bigQcm.AddQuestion(QType.text);
-            bigQcm.AddQuestion(QType.image);
+            bigQcm.AddQuestion(QType.image); // Image multiple
+            bigQcm.AddQuestion(QType.image, true, - 1); // Image simple
+            bigQcm.AddQuestion(QType.image, true, -1); // Image simple
+            bigQcm.AddQuestion(QType.image, true, -1); // Image simple
+            bigQcm.AddQuestion(QType.image); // Image multiple
             await ReplyAsync("Questions ajoutées avec succès");
             //await Context.Guild.CreateTextChannelAsync(bigQcm.name);
             //await bigQcm.Preview(channel);
@@ -443,7 +435,7 @@ namespace Bot_Test
                     if (qcm.HasStarted)
                     {
                         if (qcm.questionsID.Contains(socketReaction.MessageId) && !socketReaction.User.Value.IsBot)
-                        {
+                        {   
                             await Console.Out.WriteLineAsync("\nMessage cliqué appartient à liste des questions -->" );
                             Console.ForegroundColor = ConsoleColor.Green;
                             Console.Write("True\n");
@@ -568,8 +560,6 @@ namespace Bot_Test
             }
         }
 
-
-     
 
         [Command("del", RunMode = RunMode.Async)]
         public async Task RemoveLastQuestion([Remainder] string qcmName)
