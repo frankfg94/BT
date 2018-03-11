@@ -35,7 +35,7 @@ public class AudioModule : ModuleBase<ICommandContext>
     List<IGuildUser> list = new List<IGuildUser>();
 
 
-    private async Task speakDetected(ulong id, bool updated)
+    private async Task SpeakDetected(ulong id, bool updated)
     {
         if (updated) await ReplyAsync("Quelqu'un parle");
     }

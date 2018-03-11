@@ -38,9 +38,11 @@ namespace BT
                 Height = 200,
                 Text = "Charger un fichier... "
             };
-            TextBox txtBox = new TextBox();
-            txtBox.Location = new Point(10, 50);
-            txtBox.Visible = true;
+            TextBox txtBox = new TextBox
+            {
+                Location = new Point(10, 50),
+                Visible = true
+            };
             progressForm.Controls.Add(txtBox);
             var progressFormTask = progressForm.ShowDialog();
             var data = await LoadDataAsync();
@@ -80,31 +82,6 @@ namespace BT
             Random r = new Random();
             EmbedBuilder.AddField("Résultat : ", r.Next(0, max));
             await Context.Channel.SendMessageAsync("", false, EmbedBuilder);
-        }
-
-        [Command("qcm2  ")]
-        public async Task qcm2()
-        {
-            var eb = new EmbedBuilder();
-            var eb2 = new EmbedBuilder();
-            var eb3 = new EmbedBuilder();
-            var eb4 = new EmbedBuilder();
-            Random n = new Random();
-            responded = true;
-            eb.WithTitle("QCM visuel");
-            eb.WithDescription("Selectionner la réponse appropriée");
-            eb.AddField("a) ", "1").WithImageUrl("http://www.clker.com/cliparts/c/2/4/3/1194986855125869974rubik_s_cube_random_petr_01.svg.med.png");
-            eb2.AddField("b) ", "2").WithImageUrl("http://image.jeuxvideo.com/medias-md/145528/1455277964-3848-card.jpg");
-            eb3.AddField("c) ", "3").WithImageUrl("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTEOleL54qD1hv-Y4KwzHLnWo9BGyUE3g8vYn4qWD8Lfk2i4-DJug");
-            eb4.AddField("d) ", "4").WithImageUrl("http://popupcity.net/wp-content/uploads/2012/04/CityEngine.jpg");
-            var m1 = await Context.Channel.SendMessageAsync("", false, eb);
-            var m2 = await Context.Channel.SendMessageAsync("", false, eb2);
-            var m3 = await Context.Channel.SendMessageAsync("", false, eb3);
-            var m4 = await Context.Channel.SendMessageAsync("", false, eb4);
-            await AddQcmReactions(m1);
-            await AddQcmReactions(m2);
-            await AddQcmReactions(m3);
-            await AddQcmReactions(m4);            
         }
 
         public async Task AddQcmReactions(IUserMessage msg)
@@ -333,11 +310,9 @@ namespace BT
             qcmList.Add(bigQcm);
             bigQcm.name = name;
             bigQcm.AddQuestion(QType.text);
+            bigQcm.AddQuestion(QType.text,false,Qcm.TextQuestion.DefaultContent);
             bigQcm.AddQuestion(QType.image); // Image multiple
-            bigQcm.AddQuestion(QType.image, true, - 1); // Image simple
-            bigQcm.AddQuestion(QType.image, true, -1); // Image simple
-            bigQcm.AddQuestion(QType.image, true, -1); // Image simple
-            bigQcm.AddQuestion(QType.image); // Image multiple
+            bigQcm.AddQuestion(QType.image,true); // Image simple
             await ReplyAsync("Questions ajoutées avec succès");
             //await Context.Guild.CreateTextChannelAsync(bigQcm.name);
             //await bigQcm.Preview(channel);
@@ -435,6 +410,7 @@ namespace BT
                     if (qcm.HasStarted)
                     {
                         if (qcm.questionsID.Contains(socketReaction.MessageId) && !socketReaction.User.Value.IsBot)
+                            // On empèche le bot de détecter ses propres réactions (quand il affiche les 4 réponses possibles), et si on regarde si le message appartient à la liste des questions
                         {   
                             await Console.Out.WriteLineAsync("\nMessage cliqué appartient à liste des questions -->" );
                             Console.ForegroundColor = ConsoleColor.Green;
@@ -444,6 +420,7 @@ namespace BT
                             //await ReplyAsync("Reaction détectée");
                             //await DisplayCitation();
                             await StartQCM(qcm.name);
+                            qcm.allAnswers.Add(socketReaction);
                             i++;
                         }       
                     }
@@ -523,7 +500,18 @@ namespace BT
                     msg = await qcm.DisplayInDiscord(_client.GetChannel(414746672284041222) as ISocketMessageChannel, qcm.questions[i]);
                     qcm.questionsID.Add(msg.Id);
                 }
-                else await channel.SendMessageAsync("Vous êtes arrivé au bout de ce QCM");
+                else
+                {
+                    await channel.SendMessageAsync("Vous êtes arrivé au bout de ce QCM");
+                    await channel.SendMessageAsync("Réponses enregistrées : " + qcm.allAnswers.Count );
+                    EmbedBuilder embed = new EmbedBuilder();
+                    foreach(var ans in qcm.allAnswers)
+                    {
+                        embed.AddField("Réponse "  + ans.Emote.Name , " | " + ans.User.Value.Username);
+                    }
+                    await channel.SendMessageAsync("", false, embed);
+                }
+
             }
         }
 
@@ -590,25 +578,15 @@ namespace BT
         }
 
         [Command("ping")]
-        public async Task ping()    
+        public async Task Pin()    
         {
             var msg = await ReplyAsync("Hello World");
             await msg.AddReactionAsync(new Emoji("😨"));
             await Context.Client.SetGameAsync("House Party");   
         }   
 
-        [Command("eb")]
-        public async Task beauMsg()
-        {
-            var eb = new EmbedBuilder();
-            eb.WithDescription("Ceci est un test");
-            eb.WithColor(Discord.Color.DarkBlue);
-            eb.WithTitle("Message amélioré");
-            await Context.Channel.SendMessageAsync("", false, eb);
-        }
-
         [Command("note")]
-        public async Task note(string s)
+        public async Task Note(string s)
         {
             Random random = new Random();
             await Context.Channel.SendMessageAsync("Note : " + random.Next(0,11)+" / 10");

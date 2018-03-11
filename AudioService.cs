@@ -62,8 +62,7 @@ public class AudioService : ModuleBase<ICommandContext>
 
     public async Task LeaveAudio(IGuild guild)
     {
-        IAudioClient client;
-        if (ConnectedChannels.TryRemove(guild.Id, out client))
+        if (ConnectedChannels.TryRemove(guild.Id, out IAudioClient client))
         {
             await client.StopAsync();
             //await Log(LogSeverity.Info, $"Disconnected from voice on {guild.Name}.");

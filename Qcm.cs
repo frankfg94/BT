@@ -26,23 +26,23 @@ namespace BT
 
     public class Qcm : ModuleBase<SocketCommandContext>
     {
+        public List<SocketReaction> allAnswers = new List<SocketReaction>();
         public string name = "defaut";
         public bool HasStarted = false;
-        
-           public enum CalculType
-            {
-                Addition = 0,
-                Soustraction = 1,
-                Multiplication = 2,
-               // Division = 3
-            }
 
+        public enum CalculType
+        {
+            Addition = 0,
+            Soustraction = 1,
+            Multiplication = 2,
+            // Division = 3
+        }
 
         public class Question : ModuleBase<SocketCommandContext>
         {
             public int type;
             public object content;
-            public new string name = "Sans nom";
+            public string name = "Sans nom";
             public string answer = "🇦";
             public bool answered = false;
             public ImageQuestion imageQuestion;
@@ -51,7 +51,7 @@ namespace BT
                 type = _type;
                 content = _content;
                 name = Qname;
-                if(type != QType.image)
+                if (type != QType.image)
                 {
                     imageQuestion = ImageQuestion.None;
                 }
@@ -60,7 +60,7 @@ namespace BT
             public bool Answered()
             {
                 if (answer == null)
-                    return false;   
+                    return false;
                 else
                     return true;
             }
@@ -77,15 +77,28 @@ namespace BT
         /// <summary>
         /// Ajoute une question de type texte, image ou audio à la position indiquée, si aucune n'est précisée, la question sera rajoutée à la fin du Qcm
         /// </summary>
-        public Question AddQuestion(int type,  bool SingleImage = false,int pos = -1)
+        public Question AddQuestion(int type, bool SingleImage = false,TextQuestion tq = TextQuestion.MathContent,int pos = -1)
         {
-            Question qToAdd;
+            Question qToAdd = null;
             if (type == QType.text)
             {
-                qToAdd = new Question(null,type, "Question texte")
+                if(tq == TextQuestion.MathContent)
                 {
-                    content = GenerateMathContent()
-                };
+                    CalculType[] valeurs = { CalculType.Addition, CalculType.Multiplication, CalculType.Soustraction };
+                    CalculType CalculTypeAleatoire = valeurs[r.Next(valeurs.Length)];
+                    qToAdd = new Question(null, type, "Question texte Maths")
+                    {
+                         content = GenerateMathContent(CalculTypeAleatoire)
+                    };
+                }
+                else if (tq == TextQuestion.DefaultContent)
+                {
+                    qToAdd = new Question(null, type, "Question texte par défaut")
+                    {
+                        content = GenerateDefaultContent(qToAdd)
+                    };
+                }
+
             }
             else if (type == QType.image)
             {
@@ -96,9 +109,9 @@ namespace BT
                 }
                 else
                 {
-                    qToAdd.content = GeneratePictureContent(qToAdd,ImageQuestion.CorrespondingImageMultiple);
+                    qToAdd.content = GeneratePictureContent(qToAdd, ImageQuestion.CorrespondingImageMultiple);
                 }
-            }                
+            }
             else
             {
                 qToAdd = new Question(null, type, "Autre");
@@ -116,12 +129,11 @@ namespace BT
             return qToAdd;
         }
 
-         List<EmbedBuilder> ebListSimple = new List<EmbedBuilder>();
-         List<EmbedBuilder> ebListMultiple = new List<EmbedBuilder>();
-        List<List<EmbedBuilder>> ebListMultipleGen = new List<List<EmbedBuilder>>();
-        List<string> recognizeThingsPictures = new List<string>(new string[] {"Tank","JeanneA", "JeuneFillePerle", "SpireDublin" });
+        List<EmbedBuilder> ebListSimple = new List<EmbedBuilder>();
+        List<EmbedBuilder> ebListMultiple = new List<EmbedBuilder>();
+        List<string> recognizeThingsPictures = new List<string>(new string[] { "Tank", "JeanneA", "JeuneFillePerle", "SpireDublin" });
         Random r = new Random();
-        private List<EmbedBuilder> GeneratePictureContent( Question q, ImageQuestion type = ImageQuestion.RecognizePictureSingle)
+        private List<EmbedBuilder> GeneratePictureContent(Question q, ImageQuestion type = ImageQuestion.RecognizePictureSingle)
         {
             EmbedBuilder imgEb1 = new EmbedBuilder();
             if (type == ImageQuestion.RecognizePictureSingle)
@@ -152,7 +164,7 @@ namespace BT
                     case "SpireDublin":
                         imgEb1.WithTitle("Quel représente ce monument");
                         url = "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/E4324-Spire-of-Dublin.jpg/390px-E4324-Spire-of-Dublin.jpg";
-                        imgEb1.WithDescription(" a) La Spire de Dublin \n b) L'épine de Berlin \n c) Le pic de Berlin \n d) La Pointe de Dublin");
+                        imgEb1.WithDescription(" a) La Spire de Dub lin \n b) L'épine de Berlin \n c) Le pic de Berlin \n d) La Pointe de Dublin");
                         q.answer = "La Spire de Dublin";
                         break;
                     default:
@@ -188,7 +200,7 @@ namespace BT
                         ebListMultiple.Add(imgEb2.WithImageUrl(url2));
                         ebListMultiple.Add(imgEb3.WithImageUrl(url3));
                         ebListMultiple.Add(imgEb4.WithImageUrl(url4));
-                        q.name = "Lequel de ces tableaux n'a pas été peint par Vermeer?";
+                        q.name = "Lequel fs tableaux n'a pas été peint par Vermeer?";
                         q.answer = "Vermeer";
                         break;
                     default:
@@ -198,11 +210,7 @@ namespace BT
                         break;
                 }
                 q.imageQuestion = type;
-                List<EmbedBuilder> MagicList = new List<EmbedBuilder>();
-                MagicList.Add(imgEb1);
-                MagicList.Add(imgEb2);
-                MagicList.Add(imgEb3);
-                MagicList.Add(imgEb4);
+                List<EmbedBuilder> MagicList = new List<EmbedBuilder> { imgEb1, imgEb2, imgEb3, imgEb4 };
                 return MagicList;
             }
             return ebListMultiple;
@@ -213,6 +221,115 @@ namespace BT
         Random n = new Random();
 
         // créer un système d'héritage
+
+        private EmbedBuilder ConvertToEmbed(List<Object> data)
+        {
+            EmbedBuilder eb = new EmbedBuilder();
+            string[] textAnswers = (string[])data[0];
+            string title = (string)data[1];
+            string imageUrl = (string)data[2];
+
+            if (textAnswers.Count() != 4)
+            {
+                Console.WriteLine("ATTENTION : Taille du tableau de réponse différent de 4");
+            }
+
+            eb.WithTitle(title);
+            eb.AddField("Réponse :regional_indicator_a:", textAnswers[0]);
+            eb.AddField("Réponse :regional_indicator_b:", textAnswers[1]);
+            eb.AddField("Réponse :regional_indicator_c:", textAnswers[2]);
+            eb.AddField("Réponse :regional_indicator_d:", textAnswers[3]);
+            if (imageUrl != string.Empty)
+            {
+                eb.WithThumbnailUrl(imageUrl);
+            }
+            else
+            {
+                imageUrl = "http://st.le-precepteur.net/imgr/s/symboles/point-interrogation-rond-rouge-225x225.png";
+            }
+            return eb;
+        }
+
+        private List<Object> ImportDataForDefaultContent(int id)
+        {
+            List<Object> data = new List<object>();
+            Console.WriteLine("Importation du contenu :" + id + " pour default text content");
+            string imageUrl = "";
+            string question = "Pas de titre fourni";
+            string correctTextAnswer = "Pas de réponse fournie";
+            string a, b, c, d = null;
+            string[] possibleTextAnswers = new string[4];
+            switch (id)
+            {
+                case 0:
+                    {
+                        question = "Dans quel océan la Nouvelle-Zélande se trouve-t-elle ?";
+                        imageUrl = "http://img.playbuzz.com/image/upload/f_auto,fl_lossy,q_auto/cdn/c2d5087c-b230-4a96-87aa-20e8f14f7412/f4e9db16-8212-4ced-8dad-4fe4f6ff86e8.jpg";
+                        a = "Antarctique";
+                        b = "Pacifique";
+                        c = "Indien";
+                        d = "Atlantique";
+                        correctTextAnswer = b;
+                        break;
+                    }
+                case 1:
+                    {
+                        question = "À quel écrivain doit-on la « Divine Comédie » ?";
+                        imageUrl = "http://img.playbuzz.com/image/upload/f_auto,fl_lossy,q_auto/cdn/c2d5087c-b230-4a96-87aa-20e8f14f7412/1795bb50-ff65-4b62-b67e-d101a4afdcc1.jpg";
+                        a = "Dante";
+                        b = "Umberto Eco";
+                        c = "Petraque";
+                        d = "Boccace";
+                        correctTextAnswer = a;
+                        break;
+                    }
+                default:
+                    {
+                        question = "Index incorrect";
+                        a = b = c = d = "N/A";
+                        break;
+                    }
+
+            }
+
+            Console.WriteLine("1");
+            possibleTextAnswers[0] = a;
+            Console.WriteLine("2");
+            possibleTextAnswers[1] = b;
+            possibleTextAnswers[2] = c;
+            possibleTextAnswers[3] = d;
+
+            data.Add(possibleTextAnswers);
+            data.Add(question);
+            data.Add(imageUrl);
+            data.Add(correctTextAnswer);
+            Console.WriteLine("3");
+            return data;
+        }
+
+        public enum TextQuestion
+            {
+                DefaultContent = 0,
+                MathContent = 1,
+            }
+
+        public void UpdateQuestionData(Question q, Object[] data)
+        {
+            q.name = (string)data[1];
+            q.answer = (string)data[3];
+        }
+
+        public EmbedBuilder GenerateDefaultContent(Question q)
+        {
+            Console.WriteLine("Tentative de génération d'une question texte par défaut");
+            // Génération d'un nombre aléatoire
+            int textQuestionCount = 2;
+            int randomNumber = r.Next(0, textQuestionCount-1);
+
+            // Importation des données, et conversion dans le format de Discord
+            var data = ImportDataForDefaultContent(randomNumber);
+            return ConvertToEmbed(data);
+        }
 
         public EmbedBuilder GenerateMathContent(CalculType t = CalculType.Multiplication)
         {
@@ -237,6 +354,10 @@ namespace BT
                 int b = n.Next(50, 300);
                 result = a - b;
                 eb.WithTitle("QCM de mathématiques\n" + a + " - " + b + " = ? ");
+            }
+            else
+            {
+                eb.WithTitle("Type de calcul inconnu :" + t);
             }
 
             eb.AddField("a) ", result);
