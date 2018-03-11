@@ -372,7 +372,7 @@ namespace BT
         private int SimpleID = 0;
         public async Task<IMessage> DisplayInDiscord(ISocketMessageChannel channel, Question question)
         {
-            Console.WriteLine("Fonction d'affichage lancée");
+            Console.WriteLine("Fonction d'affichage lancée ( Nom : DisplayInDiscord ) ");
             IUserMessage msg;
             if (question.type == QType.text)
             {
