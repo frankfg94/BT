@@ -186,7 +186,7 @@ namespace BT
                 EmbedBuilder imgEb4 = new EmbedBuilder();
 
                 // r : nombre aléatoire de type Random(), R.Next(a,b) : prendre un nombre aléatoire entre a et b
-                int randomNumber = r.Next(0, correctImage.Count());
+                   int randomNumber = r.Next(0, correctImage.Count());
                 string name = correctImage[randomNumber];
                 string url1, url2, url3, url4 = null;
                 switch (name)
@@ -196,10 +196,11 @@ namespace BT
                         url2 = "http://www.rivagedeboheme.fr/medias/images/vermeer-la-jeune-fille-a-la-perle-1665-1667.jpg";
                         url3 = "https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Cropped_version_of_Jan_Vermeer_van_Delft_002.jpg/260px-Cropped_version_of_Jan_Vermeer_van_Delft_002.jpg";
                         url4 = "https://upload.wikimedia.org/wikipedia/commons/7/78/Pieter_de_Hooch_-_The_Golf_Players_-_c.1658.jpg";
-                        ebListMultiple.Add(imgEb1.WithImageUrl(url1));
-                        ebListMultiple.Add(imgEb2.WithImageUrl(url2));
-                        ebListMultiple.Add(imgEb3.WithImageUrl(url3));
-                        ebListMultiple.Add(imgEb4.WithImageUrl(url4));
+                        
+                        ebListMultiple.Add(imgEb1.WithImageUrl(url1).WithTitle("Réponse :regional_indicator_a:"));
+                        ebListMultiple.Add(imgEb2.WithImageUrl(url2).WithTitle("Réponse :regional_indicator_b:"));
+                        ebListMultiple.Add(imgEb3.WithImageUrl(url3).WithTitle("Réponse :regional_indicator_c:"));
+                        ebListMultiple.Add(imgEb4.WithImageUrl(url4).WithTitle("Réponse :regional_indicator_d:"));
                         q.name = "Lequel de ces tableaux n'a pas été peint par Vermeer?"; // Ce qui est affiché trop de fois d'affilée
                         q.answer = "Vermeer";
                         break;

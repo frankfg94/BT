@@ -182,7 +182,7 @@ namespace BT
         }
 
         [Command("killAll", RunMode = RunMode.Async)]
-        public async Task KillAll()
+        public async Task KillAll()  
         {
             var users = Context.Guild.Users;
             string userString = null;
@@ -199,7 +199,7 @@ namespace BT
         }
 
         [Command("resetN", RunMode = RunMode.Async)]
-        public async Task ResetNames()
+        public async Task ResetNames()  
         {
             var users = Context.Guild.Users;
             foreach (var u in users)
@@ -460,10 +460,8 @@ namespace BT
             {
                 var reaction = msg.Reactions.Last();
                 await ReplyAsync(reaction.Value.ToString());
-               
             }
         }
-
 
         [Command("citation",RunMode = RunMode.Async)]
         public async Task DisplayCitation()
@@ -474,14 +472,17 @@ namespace BT
             EmbedBuilder e = new EmbedBuilder();
             e.WithTitle("Citation n°"  + randomLineNumber);
             e.WithDescription(lines[randomLineNumber]);
-            await Context.Channel.SendMessageAsync("",false, e);
+            await Context.Channel.SendMessageAsync("", false, e);
         }
 
-
+        
+     
         static int i = 1; 
         [Command("start", RunMode = RunMode.Async)]
         public async Task StartQCM([Remainder] string qcmName)
         {
+            AudioModule am = new AudioModule(Program.audioService);
+            await am.Music1();
             Qcm qcm = await GetQcm(qcmName);
             IMessage msg;
             if (!qcm.HasStarted)
@@ -498,7 +499,7 @@ namespace BT
                 {
                     Console.WriteLine("On arrive à une question de type :" + qcm.questions[i].type);
                     msg = await qcm.DisplayInDiscord(_client.GetChannel(414746672284041222) as ISocketMessageChannel, qcm.questions[i]);
-                    qcm.questionsID.Add(msg.Id);
+                    qcm.questionsID.Add(msg.Id);    
                 }
                 else
                 {
@@ -528,8 +529,8 @@ namespace BT
                     QCMfound = true;
                     string typeString = string.Empty;
                     if (type == QType.text) typeString = "Texte";
-                    if (type == QType.image) typeString = "Image";
-                    if (type == QType.audio) typeString = "Audio";
+                    else if (type == QType.image) typeString = "Image";
+                    else if (type == QType.audio) typeString = "Audio";
                     else typeString = "Inconnu";
                     qcm.AddQuestions();
                     await ReplyAsync("Questions rajoutées ! \n Type :" + typeString);

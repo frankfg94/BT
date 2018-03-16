@@ -15,7 +15,7 @@ public class AudioModule : ModuleBase<ICommandContext>
     private readonly AudioService _service;
 
     // Remember to add an instance of the AudioService
-    // to your IServiceCollection when you initialize your bot
+    // to your IServiceCollection when you initialize your botx
     public AudioModule(AudioService service)
     {
         _service = service;
@@ -29,6 +29,14 @@ public class AudioModule : ModuleBase<ICommandContext>
     {
         await ReplyAsync("J'ai détecté votre commande, je ne peux pas vous dire si l'audio fonctionne pour le moment");
         await _service.JoinAudio(Context.Guild, (Context.User as IVoiceState).VoiceChannel);
+    }
+
+    [Command("music1",RunMode = RunMode.Async)]
+    public async Task Music1()  
+    {
+        await ReplyAsync("Lancement fonction");
+        await JoinCmd();
+        await PlayCmd(@"D:/Téléchargements/koh.mp3");
     }
 
 

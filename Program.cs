@@ -32,6 +32,7 @@ namespace BT
         string[] lines = File.ReadAllLines("token.txt");
         private string botToken;
 
+        public  static AudioService audioService = new AudioService();
         public async Task RunBotAsync()
         {
             //_services = new ServiceCollection().AddSingleton(new AudioService());
@@ -41,13 +42,11 @@ namespace BT
                 .AddSingleton(_commands)
                 .AddSingleton(new AudioService())
                 .BuildServiceProvider();
-                
-
             _client.Log += Log;
-            Ping p = new Ping(_client);
             await RegistercommandAsync();
             _client.UserJoined += AnnounceJoinedUser; //Check if userjoined
             _client.UserVoiceStateUpdated += VoiceUpdate;
+            Ping p = new Ping(_client);
             _client.ReactionAdded += p.ReactionParse;
 
             botToken = lines[0];
@@ -62,7 +61,7 @@ namespace BT
             // event subscription  
         }
 
-
+       
         public async Task VoiceUpdate(SocketUser user, SocketVoiceState state, SocketVoiceState state2) //welcomes New Players
         {
             var channel = _client.GetChannel(370666551306616845) as SocketTextChannel; //gets channel to send message in
@@ -101,27 +100,31 @@ namespace BT
             return Task.FromResult(0);
         }
 
+        /// <summary>
+        /// Fonction qui détecte chaque message reçu dans discord et lance l'événement HandleCommandAsync pour le traiter
+        /// </summary>
+        /// <returns></returns>
         public async Task RegistercommandAsync()
         {
             _client.MessageReceived += HandleCommandAsync;
             await _commands.AddModulesAsync(Assembly.GetEntryAssembly());
         }
 
+        /// <summary>
+        ///Traitement du message par l'API de Discord
+        /// </summary>
+        /// <param name="arg">Désigne le contenu texte du message lui-même</param>
+        /// <returns></returns>
         private async Task HandleCommandAsync(SocketMessage arg)
         {
             var message = arg as SocketUserMessage;
             if (message is null || message.Author.IsBot) return;
-
-
             int argPos = 0;
 
             if (message.HasCharPrefix('!', ref argPos) || message.HasMentionPrefix(_client.CurrentUser, ref argPos))
             {
-
                 var context = new SocketCommandContext(_client, message);
-
                 var result = await _commands.ExecuteAsync(context, argPos, _services);
-
                 if (!result.IsSuccess)
                     Console.WriteLine(result.ErrorReason);
 

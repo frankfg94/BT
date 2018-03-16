@@ -12,6 +12,7 @@ public class AudioService : ModuleBase<ICommandContext>
 {
     private readonly ConcurrentDictionary<ulong, IAudioClient> ConnectedChannels = new ConcurrentDictionary<ulong, IAudioClient>();
 
+
     IAudioClient client;
     public async Task JoinAudio(IGuild guild, IVoiceChannel channel)
     {
