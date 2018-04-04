@@ -28,6 +28,7 @@ namespace BT
             _client = client;
         }
 
+
         [Command("a")]
         public async Task ObtainTheFileAsync()
         {
@@ -313,10 +314,24 @@ namespace BT
             bigQcm.AddQuestion(QType.text,false,Qcm.TextQuestion.DefaultContent);
             bigQcm.AddQuestion(QType.image); // Image multiple
             bigQcm.AddQuestion(QType.image,true); // Image simple
-            await ReplyAsync("Questions ajoutées avec succès");
+            try { await ReplyAsync("Questions ajoutées avec succès"); }
+            catch { await ReplyAsync("Erreur lors de la création du QCM"); }
             //await Context.Guild.CreateTextChannelAsync(bigQcm.name);
             //await bigQcm.Preview(channel);
         }
+
+        [Command("qcmM", RunMode = RunMode.Async)]
+        public async Task MathSampleQcm(string name = "maths")
+        {
+            ISocketMessageChannel channel = Context.Channel;
+            await ReplyAsync("Lancement du méga QCM! :fire: ");
+            Qcm bigQcm = new Qcm();
+            qcmList.Add(bigQcm);
+            bigQcm.name = name;
+            for(int i = 0; i < 3; i++)      bigQcm.AddQuestion(QType.text);
+            await ReplyAsync("Questions ajoutées avec succès");
+        }
+
 
         private async Task DisplayList()
         {
@@ -411,7 +426,8 @@ namespace BT
                     {
                         if (qcm.questionsID.Contains(socketReaction.MessageId) && !socketReaction.User.Value.IsBot)
                             // On empèche le bot de détecter ses propres réactions (quand il affiche les 4 réponses possibles), et si on regarde si le message appartient à la liste des questions
-                        {   
+                        {
+                            qcm.allAnswers.Add(socketReaction);
                             await Console.Out.WriteLineAsync("\nMessage cliqué appartient à liste des questions -->" );
                             Console.ForegroundColor = ConsoleColor.Green;
                             Console.Write("True\n");
@@ -420,7 +436,6 @@ namespace BT
                             //await ReplyAsync("Reaction détectée");
                             //await DisplayCitation();
                             await StartQCM(qcm.name);
-                            qcm.allAnswers.Add(socketReaction);
                             i++;
                         }       
                     }
@@ -481,8 +496,8 @@ namespace BT
         [Command("start", RunMode = RunMode.Async)]
         public async Task StartQCM([Remainder] string qcmName)
         {
-            AudioModule am = new AudioModule(Program.audioService);
-            await am.Music1();
+            //AudioModule am = new AudioModule(Program.audioService);
+            //await am.Music1();
             Qcm qcm = await GetQcm(qcmName);
             IMessage msg;
             if (!qcm.HasStarted)
@@ -506,9 +521,12 @@ namespace BT
                     await channel.SendMessageAsync("Vous êtes arrivé au bout de ce QCM");
                     await channel.SendMessageAsync("Réponses enregistrées : " + qcm.allAnswers.Count );
                     EmbedBuilder embed = new EmbedBuilder();
+                    int i = 0;
                     foreach(var ans in qcm.allAnswers)
                     {
-                        embed.AddField("Réponse "  + ans.Emote.Name , " | " + ans.User.Value.Username);
+                        embed.AddField("Votre Réponse "  + ans.Emote.Name , " par " + ans.User.Value.Username);
+                        embed.AddField("Bonne réponse ",qcm.questions[i].answer + ":" + qcm.questions[i].answerLetter);
+                        i++;
                     }
                     await channel.SendMessageAsync("", false, embed);
                 }

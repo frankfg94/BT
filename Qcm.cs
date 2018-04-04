@@ -44,6 +44,7 @@ namespace BT
             public object content;
             public string name = "Sans nom";
             public string answer = "🇦";
+            public string answerLetter = "🇦";
             public bool answered = false;
             public ImageQuestion imageQuestion;
             public Question(object _answer, int _type = QType.text, object _content = null, string Qname = "Sans nom", ImageQuestion imageQuestion = ImageQuestion.None)
@@ -86,10 +87,8 @@ namespace BT
                 {
                     CalculType[] valeurs = { CalculType.Addition, CalculType.Multiplication, CalculType.Soustraction };
                     CalculType CalculTypeAleatoire = valeurs[r.Next(valeurs.Length)];
-                    qToAdd = new Question(null, type, "Question texte Maths")
-                    {
-                         content = GenerateMathContent(CalculTypeAleatoire)
-                    };
+                    qToAdd = new Question(null, type, "Question texte Maths");
+                    qToAdd.content = GenerateMathContent(qToAdd, CalculTypeAleatoire);
                 }
                 else if (tq == TextQuestion.DefaultContent)
                 {
@@ -332,8 +331,9 @@ namespace BT
             return ConvertToEmbed(data);
         }
 
-        public EmbedBuilder GenerateMathContent(CalculType t = CalculType.Multiplication)
+        public EmbedBuilder GenerateMathContent( Question q, CalculType t = CalculType.Multiplication)
         {
+            Console.WriteLine("Reach");
             var eb = new EmbedBuilder();
             if(t == CalculType.Multiplication)
             {
@@ -360,11 +360,41 @@ namespace BT
             {
                 eb.WithTitle("Type de calcul inconnu :" + t);
             }
+            Console.WriteLine("Reach 1.5");
+            q.answer = result.ToString();
+            List<int> listToRandomizeAnswers = new List<int>();
+            Console.WriteLine("Reach2");
+            listToRandomizeAnswers.Add(result);
+            listToRandomizeAnswers.Add(result - 1);
+            listToRandomizeAnswers.Add(result + 1);
+            listToRandomizeAnswers.Add(result + 3);
+            var listMel = listToRandomizeAnswers.OrderBy(a => Guid.NewGuid()).ToList();
+            Console.WriteLine("Reach3   ");
+            eb.AddField("a) ", listMel[0]);
+            eb.AddField("b) ", listMel[1]);
+            eb.AddField("c) ", listMel[2]); 
+            eb.AddField("d) ", listMel[3]);
+            if (listMel[0] == result)
+                {
+                    q.answerLetter = ":regional_indicator_a:";
+                }
+            else if (listMel[1] == result)
+            {
+                q.answerLetter = ":regional_indicator_b:";
+            }
+            else if (listMel[2] == result)
+            {
+                q.answerLetter = ":regional_indicator_c:";
+            }
+            else if (listMel[3] == result)
+            {
+                q.answerLetter = ":regional_indicator_d:";
+            }
+            Console.WriteLine("Reach4");
 
-            eb.AddField("a) ", result);
-            eb.AddField("b) ", (result - 1));
-            eb.AddField("c) ", (result + 1));
-            eb.AddField("d) ", (result + 3));
+            Console.WriteLine("Bonne réponse : " +  q.answerLetter + ":" + q.answer);
+
+            // On Enleve avec RemoveAt() l'élément pour ne pas pouvoir le reprendre
 
             eb.WithColor(Color.DarkGreen);
             return eb;

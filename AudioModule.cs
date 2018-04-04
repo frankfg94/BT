@@ -7,6 +7,7 @@ using System.IO;
 using System.Reflection;
 using System.Collections;
 using System.Collections.Generic;
+using BT;
 
 public class AudioModule : ModuleBase<ICommandContext>
 {
@@ -36,9 +37,13 @@ public class AudioModule : ModuleBase<ICommandContext>
     {
         await ReplyAsync("Lancement fonction");
         await JoinCmd();
-        await PlayCmd(@"D:/Téléchargements/koh.mp3");
+        await PlayCmd(song: @"D:/Téléchargements/koh.mp3");
     }
 
+    /*
+     Le problème actuel est que je ne peux pas instancier de classe Ping depuis l'Audio Module
+         
+    */
 
     List<IGuildUser> list = new List<IGuildUser>();
 
