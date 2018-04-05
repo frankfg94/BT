@@ -69,7 +69,6 @@ namespace BT
             }
         }
 
-        private int result;
         private Random n = new Random(Guid.NewGuid().GetHashCode());
         static bool responded = false;
 
@@ -296,10 +295,17 @@ namespace BT
         }
 
         [Command("CreateAndStart", RunMode = RunMode.Async)]
-        public async Task CreateAndStart([Remainder] string name)
+        public async Task CreateAndStart([Remainder] string name = "")
         {
-            await BigQcm(name);
-            await StartQCM(name);
+            if(name == "")
+            {
+                await ReplyAsync("Merci d'indiquer un nom pour le QCM à générer");
+            }
+            else
+            {
+                await BigQcm(name);
+                await StartQCM(name);
+            }
         }
 
         [Command("BigQcm", RunMode = RunMode.Async)]
@@ -328,10 +334,21 @@ namespace BT
             Qcm bigQcm = new Qcm();
             qcmList.Add(bigQcm);
             bigQcm.name = name;
-            for(int i = 0; i < 3; i++)      bigQcm.AddQuestion(QType.text);
+            for(int i = 0; i < 3; i++)   bigQcm.AddQuestion(QType.text);
             await ReplyAsync("Questions ajoutées avec succès");
         }
 
+        [Command("qcmT", RunMode = RunMode.Async)]
+        public async Task BasicSampleQcm(string name = "text")
+        {
+            ISocketMessageChannel channel = Context.Channel;
+            await ReplyAsync("Lancement du méga QCM! :fire: ");
+            Qcm bigQcm = new Qcm();
+            qcmList.Add(bigQcm);
+            bigQcm.name = name;
+            for (int i = 0; i < 10; i++) bigQcm.AddQuestion(QType.text, false, Qcm.TextQuestion.DefaultContent);
+            await ReplyAsync("Questions ajoutées avec succès");
+        }
 
         private async Task DisplayList()
         {

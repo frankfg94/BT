@@ -92,10 +92,11 @@ namespace BT
                 }
                 else if (tq == TextQuestion.DefaultContent)
                 {
-                    qToAdd = new Question(null, type, "Question texte par défaut")
-                    {
-                        content = GenerateDefaultContent(qToAdd)
-                    };
+                    int randomID;
+                    qToAdd = new Question(null, type, "Question texte par défaut");
+                    // On génère à chaque fois avec un id différent, pour être sûr
+                    randomID = n.Next(0, 13);
+                    qToAdd.content = GenerateDefaultContent(qToAdd, randomID);
                 }
 
             }
@@ -283,6 +284,125 @@ namespace BT
                         correctTextAnswer = a;
                         break;
                     }
+                case 2:
+                    {
+                        question = "À quel site appartient le fameux forum connu sous le nom de 18-25 ?";
+                        imageUrl = "https://www.nouvelordremondial.cc/wp-content/uploads/2017/11/18-25-elite.jpg";
+                        a = "Doctissimo.com";
+                        b = "Jeuxvideo.com";
+                        c = "Koreus.com";
+                        d = "GOG.com";
+                        correctTextAnswer = b;
+                        break;
+                    }
+                case 3:
+                    {
+                        question = "Quel acteur a obtenu un Oscar avec le film 'The Artist' en 2012 ?";
+                        imageUrl = "https://www.nouvelordremondial.cc/wp-content/uploads/2017/11/18-25-elite.jpg";
+                        a = "Omar Sy";
+                        b = "Benoit Poelvoorde";
+                        c = "Vincent Cassel";
+                        d = "Jean Dujardin";
+                        correctTextAnswer = d;
+                        break;
+                    }
+                case 4:
+                    {
+                        question = "Quel élément a causé la première crise spéculative ?";
+                        imageUrl = "https://www.breizh-info.com/wp-content/uploads/2015/08/Un_krach_boursier_annonciateur_de-r%C3%A9cession.jpg";
+                        a = "L'or";
+                        b = "Le charbon";
+                        c = "Le bulbe de tulipe";
+                        d = "La soie";
+                        correctTextAnswer = c;
+                        break;
+                    }
+                case 5:
+                    {
+                        question = "A quelle hauteur se situe le point culminant du Mont Blanc ?";
+                        imageUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Mont_Blanc_depuis_Valmorel_2.jpg/1200px-Mont_Blanc_depuis_Valmorel_2.jpg";
+                        a = "4 804 m";
+                        b = "4 810 m";
+                        c = "4 408 m";
+                        d = "4 410 m";
+                        correctTextAnswer = b;
+                        break;
+                    }
+                case 6:
+                    {
+                        question = "Quel album de musique est le plus vendu de tous les temps ?";
+                        a = "'Metallica' de Metallica";
+                        b = "'Thriller' de Michael Jackson";
+                        c = "'Back in Black' de AC/DC";
+                        d = "'The Marshall Mathers LP' de Eminem";
+                        correctTextAnswer = b;
+                        break;
+                    }
+                case 7:
+                    {
+                        question = "Quand est sorti le long métrage de Disney 'Blanche - Neige' ?";
+                        //imageUrl = "https://www.nouvelordremondial.cc/wp-content/uploads/2017/11/18-25-elite.jpg";
+                        a = "1935";
+                        b = "1936";
+                        c = "1937";
+                        d = "1938";
+                        correctTextAnswer = c;
+                        break;
+                    }
+                case 8:
+                    {
+                        question = "Quels dirigeants étaient présents à la conférence de Yalta ?";
+                        a = "Staline, Churchill et Roosevelt";
+                        b = "Staline, Hitler et Churchill";
+                        c = "De Gaulle, Churchill et Roosevelt";
+                        d = "De Gaulle, Staline et Churchill";
+                        correctTextAnswer = a;
+                        break;
+                    }
+                case 9:
+                    {
+                        question = "En quelle année s'est éteint le cougar américain ?";
+                        imageUrl = "http://img-aws.ehowcdn.com/750x428p/photos.demandstudios.com/getty/article/94/171/ALI_066_XS.jpg";
+                        a = "2009";
+                        b = "2012";
+                        c = "2007";
+                        d = "2011";
+                        correctTextAnswer = c;
+                        break;
+                    }
+                case 10:
+                    {
+                        question = "Quelle est cette région ?";
+                        imageUrl = "https://www.nouvelordremondial.cc/wp-content/uploads/2017/11/18-25-elite.jpghttps://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Lorraine_region_locator_map.svg/1200px-Lorraine_region_locator_map.svg.png";
+                        a = "Aquitaine";
+                        b = "Alsace";
+                        c = "Lorraine";
+                        d = "Vendée";
+                        correctTextAnswer = c;
+                        break;
+                    }
+                case 11:
+                    {
+                        question = "Qui est-ce ?";
+                        imageUrl = "http://www.crainsnewyork.com/apps/pbcsi.dll/storyimage/CN/20140702/REAL_ESTATE/140709973/AR/0/Larry-Silverstein.jpg";
+                        a = "Bill Gates";
+                        b = "Warren Buffett";
+                        c = "Larry Ellison";
+                        d = "Larry Silverstein";
+                        correctTextAnswer = c;
+                        break;
+                    }
+                case 12:
+                    {
+                        question = "Quel est le nom de ce groupe de musique ?";
+                        imageUrl = "http://www.kultplus.com/wp-content/uploads/2017/10/rs-metallica-1d77d17a-78a8-4da2-b52a-5cc734e8f2db.jpg";
+                        a = "Metallica";
+                        b = "Eagles";
+                        c = "AC/DC";
+                        d = "Scorpions";
+                        correctTextAnswer = c;
+                        break;
+                    }
                 default:
                     {
                         question = "Index incorrect";
@@ -298,7 +418,6 @@ namespace BT
             possibleTextAnswers[1] = b;
             possibleTextAnswers[2] = c;
             possibleTextAnswers[3] = d;
-
             data.Add(possibleTextAnswers);
             data.Add(question);
             data.Add(imageUrl);
@@ -319,11 +438,11 @@ namespace BT
             q.answer = (string)data[3];
         }
 
-        public EmbedBuilder GenerateDefaultContent(Question q)
+        public EmbedBuilder GenerateDefaultContent(Question q, int id)
         {
             Console.WriteLine("Tentative de génération d'une question texte par défaut");
             // Génération d'un nombre aléatoire
-            int textQuestionCount = 2;
+            int textQuestionCount = 12;
             int randomNumber = r.Next(0, textQuestionCount-1);
 
             // Importation des données, et conversion dans le format de Discord
