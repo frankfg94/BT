@@ -70,6 +70,14 @@ public class AudioService : ModuleBase<ICommandContext>
         }
     }
 
+    public void StopAudio()
+    {
+        foreach (var process in Process.GetProcessesByName("ffmpeg"))
+        {
+            process.Kill();
+        }
+    }
+
     public async Task SendAudioAsync(IGuild guild, IMessageChannel channel, string path)
     {
         // Your task: Get a full path to the file if the value of 'path' is only a filename.
@@ -89,7 +97,7 @@ public class AudioService : ModuleBase<ICommandContext>
         //        p.Kill();
         //    }
         //}
-
+        
         if (ConnectedChannels.TryGetValue(guild.Id, out IAudioClient client))
         {
             Console.WriteLine("\n-----------------------------ENVOI DE L'AUDIO--------------------------------------------------------\n");
@@ -106,6 +114,7 @@ public class AudioService : ModuleBase<ICommandContext>
                 }
                 finally { Console.WriteLine("FlushAsync() va être lancé "); await discord.FlushAsync(); }
                 Console.WriteLine("Execution terminée");
+                
             }
         }   
         else 

@@ -10,6 +10,7 @@ using System.Threading;
 using System.Drawing;
 using System.Linq;
 using Discord.WebSocket;
+using System.Diagnostics;
 
 namespace BT
 {
@@ -326,6 +327,25 @@ namespace BT
             //await bigQcm.Preview(channel);
         }
 
+
+        [Command("qcmIMG", RunMode = RunMode.Async)]
+        public async Task QcmSampleSingleIMG(string name = "img")
+        {
+            ISocketMessageChannel channel = Context.Channel;
+            await ReplyAsync("Lancement du QCM Image! :fire: ");
+            Qcm bigQcm = new Qcm();
+            qcmList.Add(bigQcm);
+            bigQcm.name = name;
+            bigQcm.AddQuestion(QType.image, true);
+            bigQcm.AddQuestion(QType.image, true);
+            bigQcm.AddQuestion(QType.image, true); 
+            bigQcm.AddQuestion(QType.image, true); // Image simple
+            try { await ReplyAsync("Questions ajoutées avec succès"); }
+            catch { await ReplyAsync("Erreur lors de la création du QCM"); }
+            //await Context.Guild.CreateTextChannelAsync(bigQcm.name);
+            //await bigQcm.Preview(channel);
+        }
+
         [Command("qcmM", RunMode = RunMode.Async)]
         public async Task MathSampleQcm(string name = "maths")
         {
@@ -507,14 +527,31 @@ namespace BT
             await Context.Channel.SendMessageAsync("", false, e);
         }
 
-        
-     
+        [Command("join", RunMode = RunMode.Async)]
+        public async Task JoinAudioCmd()
+        {
+            AudioService audioService = (AudioService)Program._services.GetService(typeof(AudioService));
+            AudioModule am = new AudioModule(audioService, Context);
+            await am.JoinCmd();
+        }
+
+        [Command("stop", RunMode = RunMode.Async)]
+        public async Task StopAudioCmd()
+        {
+            foreach (var process in Process.GetProcessesByName("ffmpeg"))
+            {
+                process.Kill();
+            }
+            //AudioService audioService = (AudioService)Program._services.GetService(typeof(AudioService));
+            //AudioModule am = new AudioModule(audioService, Context);
+            //am.StopCmd();
+        }
+
+
         static int i = 1; 
         [Command("start", RunMode = RunMode.Async)]
         public async Task StartQCM([Remainder] string qcmName)
         {
-            //AudioModule am = new AudioModule(Program.audioService);
-            //await am.Music1();
             Qcm qcm = await GetQcm(qcmName);
             IMessage msg;
             if (!qcm.HasStarted)
@@ -613,17 +650,36 @@ namespace BT
             }
         }
 
-        [Command("ping")]
+        [Command("ping", RunMode = RunMode.Async)]
         public async Task Pin()    
         {
             var msg = await ReplyAsync("Hello World");
             await msg.AddReactionAsync(new Emoji("😨"));
-            await Context.Client.SetGameAsync("House Party");   
+            await Context.Client.SetGameAsync("House Party");
+            await Context.Channel.SendMessageAsync("Dans Ping, on peut envoyer comme ici des msgs dans Discord mais apparemment pas dans AudioModule");
+            // NE MARCHE PAS AVEC CO DE L'EFREI NI MON TEL !!!!!!!!!!!!
+            try
+            {
+                // Pas moyen de ne pas avoir d'exception null reference
+                AudioModule am = new AudioModule((AudioService)Program._services.GetService(typeof( AudioService)), Context);
+
+                //if (am == null) Console.WriteLine("L'objet AudioModule n'existe pas");
+                //else Console.WriteLine("L'objet AudioModule OK ");  
+                //if ((AudioService)Program._services.GetService(typeof(AudioService)) == null) Console.WriteLine("L'objet AudioService n'existe pas");
+                //else Console.WriteLine("L'objet AudioService OK ");
+                await am.Test();
+            }
+            catch(Exception ex)
+            {
+                await ReplyAsync(ex.ToString());
+            }
+
         }   
 
         [Command("note")]
-        public async Task Note(string s)
+        public async Task Note(string s = "")
         {
+            if (s == "")await  ReplyAsync("Merci d'indiquer la personne à noter :yes:");
             Random random = new Random();
             await Context.Channel.SendMessageAsync("Note : " + random.Next(0,11)+" / 10");
         }

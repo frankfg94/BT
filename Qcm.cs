@@ -74,6 +74,10 @@ namespace BT
 
         public List<Question> questions = new List<Question>();
 
+
+        int textQuestionNumber = 0;
+        const int qCount = 12;
+        List<int> uniqueList = new List<int>();
         public List<ulong> questionsID = new List<ulong>();
         /// <summary>
         /// Ajoute une question de type texte, image ou audio à la position indiquée, si aucune n'est précisée, la question sera rajoutée à la fin du Qcm
@@ -92,11 +96,19 @@ namespace BT
                 }
                 else if (tq == TextQuestion.DefaultContent)
                 {
-                    int randomID;
-                    qToAdd = new Question(null, type, "Question texte par défaut");
-                    // On génère à chaque fois avec un id différent, pour être sûr
-                    randomID = n.Next(0, 13);
-                    qToAdd.content = GenerateDefaultContent(qToAdd, randomID);
+                    List<int> IDAll = new List<int>();
+
+                     qToAdd = new Question(null, type, null, "Question Texte");
+                    // On ajoute les questions dans l'ordre 
+                     int newRandom = n.Next(0, qCount);
+                    while(uniqueList.Contains(newRandom))
+                    {
+                        newRandom = n.Next(0, qCount);
+                        // On cherche au hasard tant que l'on a pas un bon random
+                    }
+                    uniqueList.Add(newRandom);
+                    qToAdd.content = GenerateDefaultContent(qToAdd, uniqueList[textQuestionNumber]);
+                    textQuestionNumber++;
                 }
 
             }
@@ -140,41 +152,101 @@ namespace BT
             {
                 Console.WriteLine("Création d'une image avec 4 réponses a) b) c) d)");
                 int randomNumber = r.Next(0, recognizeThingsPictures.Count());
-                imgEb1.WithTitle("Que représente cette image");
                 string url = null;
                 string name = recognizeThingsPictures[randomNumber];
+                string a, b, c, d ;
+                string title = "Que représente cette image ?";
+                string answer = "Non définie";
+                a = b = c = d = "N/A";
                 switch (name)
                 {
                     case "Tank":
                         url = "https://www.industrie-techno.com/mediatheque/5/4/4/000012445_imageArticlePrincipaleLarge.jpg";
-                        q.answer = "Un char d'assaut Polonais Futuriste";
-                        imgEb1.WithDescription(" a) Un prototype Polonais en construction \n b) Un char apparu dans le film Bladde Runner 2049  \n c) Un Fan-Art \n d) Un nouveau char américain");
+                        a = "Un prototype Polonais en construction";
+                        b = "Un char apparu dans le film Bladde Runner 2049";
+                        c = "Un Fan-Art";
+                        d = "Un nouveau char américain";
+                        answer = a;
                         break;
                     case "JeanneA":
                         url = "http://www.musee-orsay.fr/typo3temp/zoom/tmp_828c5c0a84bf57e06bc87366dc30b237.gif";
-                        q.answer = "Jeanne D'Arc";
-                        imgEb1.WithDescription(" a) Une jeune paysanne priant pour son mari \nb) Jeanne D'Arc\n c) Fernande Olivier \n d) Camille Claudel");
+                        title = "Que représente cette statue";
+                        a = "Une jeune paysanne priant pour son mari";
+                        b = "Jeanne D'Arc";
+                        c = "Fernande Olivier";
+                        d = "Camille Claudel";
+                        answer = b;
                         break;
                     case "JeuneFillePerle":
                         url = "https://cdn.radiofrance.fr/s3/cruiser-production/2016/05/5791f11c-4124-45b9-b493-2bd99aace836/738_meisje_met_de_parel.jpg";
-                        imgEb1.WithTitle("Quel est l'auteur de ce tableau intitulé 'La jeune fille à la Perle'?");
-                        q.answer = "Vermeer";
-                        imgEb1.WithDescription(" a) Monet \n b) Vermeer \n c) Peeter de Hooch \n d) Van Gogh");
+                        title = "Quel est l'auteur de ce tableau intitulé 'La jeune fille à la Perle'?";
+                        a = "Monet";
+                        b = "Vermeer";
+                        c = "Peeter de Hooch";
+                        d = "Van Gogh";
+                        answer = b;
                         break;
                     case "SpireDublin":
-                        imgEb1.WithTitle("Quel représente ce monument");
+                        title = "Quel représente ce monument?";
                         url = "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/E4324-Spire-of-Dublin.jpg/390px-E4324-Spire-of-Dublin.jpg";
-                        imgEb1.WithDescription(" a) La Spire de Dublin \n b) L'épine de Berlin \n c) Le pic de Berlin \n d) La Pointe de Dublin");
-                        q.answer = "La Spire de Dublin";
+                        a = "La Spire de Dublin";
+                        b = "L'épine de Berlin ";
+                        c = "Le pic de Berlin";
+                        d = "La Pointe de Dublin";
+                        answer = a;
                         break;
                     default:
                         url = "https://blog.sqlauthority.com/i/a/errorstop.png";
                         q.answer = "Erreur, image non trouvée dans liste";
                         break;
                 }
+
+                // On met les réponses dans l'ordre dans une première liste
+                List<string> initAnswers = new List<string>();
+                initAnswers.Add(a);
+                initAnswers.Add(b);
+                initAnswers.Add(c);
+                initAnswers.Add(d);
+
+                // On enregistre la bonne réponse de type texte
+                q.answer = answer;
+
+
+                // Mélange des réponses dans une nouvelle liste
+                var randomAnswers = initAnswers.OrderBy(elem => Guid.NewGuid()).ToList();
+
+
+                // On enregistre la bonne icone de réponse
+                if (randomAnswers[0] == answer)
+                {
+                    q.answerLetter = ":regional_indicator_a:";
+                }
+                else if (randomAnswers[1] == answer)
+                {
+                    q.answerLetter = ":regional_indicator_b:";
+                }
+                else if (randomAnswers[2] == answer)
+                {
+                    q.answerLetter = ":regional_indicator_c:";
+                }
+                else if (randomAnswers[3] == answer)
+                {
+                    q.answerLetter = ":regional_indicator_d:";
+                }
+
+                // Ajout du titre à l'embed
+                imgEb1.WithTitle(title);
+
+                // Création du corps à l'aide des réponses placées aléatoirement
+                imgEb1.WithDescription("a) " + randomAnswers[0] + "\nb) " + randomAnswers[1] + "\nc) " + randomAnswers[2] + "\nd) " + randomAnswers[3]);
+                // Ajout d'une image à l'embed
                 imgEb1.WithImageUrl(url);
+                // Ajout de l'embed à la liste des embeds
                 ebListSimple.Add(imgEb1);
+                // On précise le type de cette question
                 q.imageQuestion = type;
+
+                // On peut enfin retourner notre embed terminé
                 return ebListSimple;
             }
             else if (type == ImageQuestion.CorrespondingImageMultiple)
@@ -412,9 +484,7 @@ namespace BT
 
             }
 
-            Console.WriteLine("1");
             possibleTextAnswers[0] = a;
-            Console.WriteLine("2");
             possibleTextAnswers[1] = b;
             possibleTextAnswers[2] = c;
             possibleTextAnswers[3] = d;
@@ -422,7 +492,6 @@ namespace BT
             data.Add(question);
             data.Add(imageUrl);
             data.Add(correctTextAnswer);
-            Console.WriteLine("3");
             return data;
         }
 
@@ -440,19 +509,13 @@ namespace BT
 
         public EmbedBuilder GenerateDefaultContent(Question q, int id)
         {
-            Console.WriteLine("Tentative de génération d'une question texte par défaut");
-            // Génération d'un nombre aléatoire
-            int textQuestionCount = 12;
-            int randomNumber = r.Next(0, textQuestionCount-1);
-
             // Importation des données, et conversion dans le format de Discord
-            var data = ImportDataForDefaultContent(randomNumber);
+            var data = ImportDataForDefaultContent(id);
             return ConvertToEmbed(data);
         }
 
         public EmbedBuilder GenerateMathContent( Question q, CalculType t = CalculType.Multiplication)
         {
-            Console.WriteLine("Reach");
             var eb = new EmbedBuilder();
             if(t == CalculType.Multiplication)
             {
@@ -636,6 +699,13 @@ namespace BT
         ISocketMessageChannel ch;
         public async Task Preview(ISocketMessageChannel channel)
         {
+            AudioService audioService = (AudioService)Program._services.GetService(typeof(AudioService));
+            AudioModule am = new AudioModule(audioService, (SocketCommandContext) audioService.Context);
+            try { await am.Music1(); }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
             EmbedBuilder e = new EmbedBuilder();
             ch = channel;
             int id = 1;

@@ -10,13 +10,15 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace BT   
 {
+
     /// <summary>
     /// Logique d'interaction pour MainWindow.xaml
     /// </summary>
     public class Program
     {
 
-        [STAThread] // semble ne rien faire
+
+    [STAThread] // semble ne rien faire
         static void Main(string[] args)
         {
             Console.WriteLine("Starting ...\n");
@@ -26,13 +28,12 @@ namespace BT
 
         private DiscordSocketClient _client;
         private CommandService _commands;
-        private IServiceProvider _services;
-
+        static public IServiceProvider _services;
 
         string[] lines = File.ReadAllLines("token.txt");
         private string botToken;
 
-        public  static AudioService audioService = new AudioService();
+        public static AudioService audioService = new AudioService();
         public async Task RunBotAsync()
         {
             //_services = new ServiceCollection().AddSingleton(new AudioService());
@@ -44,6 +45,7 @@ namespace BT
                 .BuildServiceProvider();
             _client.Log += Log;
             await RegistercommandAsync();
+            
             _client.UserJoined += AnnounceJoinedUser; //Check if userjoined
             _client.UserVoiceStateUpdated += VoiceUpdate;
             Ping p = new Ping(_client);
@@ -56,8 +58,6 @@ namespace BT
 
             await Task.Delay(-1);
 
-            
-            
             // event subscription  
         }
 
@@ -66,7 +66,6 @@ namespace BT
         {
             var channel = _client.GetChannel(370666551306616845) as SocketTextChannel; //gets channel to send message in
             await channel.SendMessageAsync("Audio mis à jour pour " + user + "\nmuté :"+ state.IsMuted + "\nChaine :"+state.VoiceChannel);
-            
         }
 
         public async Task AnnounceJoinedUser(SocketGuildUser user) //welcomes New Players
