@@ -179,6 +179,119 @@
           "lib/net45/Newtonsoft.Json.dll": {}
         }
       },
+      "PostSharp/5.0.50": {
+        "type": "package",
+        "dependencies": {
+          "PostSharp.Redist": "[5.0.50, 6.0.0)"
+        },
+        "compile": {
+          "lib/net35-client/_._": {}
+        },
+        "runtime": {
+          "lib/net35-client/_._": {}
+        },
+        "build": {
+          "build/PostSharp.props": {},
+          "build/PostSharp.targets": {}
+        }
+      },
+      "PostSharp.Patterns.Aggregation/5.0.50": {
+        "type": "package",
+        "dependencies": {
+          "PostSharp.Patterns.Aggregation.Redist": "[5.0.50]",
+          "PostSharp.Patterns.Common": "[5.0.50]"
+        }
+      },
+      "PostSharp.Patterns.Aggregation.Redist/5.0.50": {
+        "type": "package",
+        "dependencies": {
+          "PostSharp.Patterns.Common.Redist": "[5.0.50]"
+        },
+        "compile": {
+          "lib/net45/PostSharp.Patterns.Aggregation.dll": {}
+        },
+        "runtime": {
+          "lib/net45/PostSharp.Patterns.Aggregation.dll": {}
+        }
+      },
+      "PostSharp.Patterns.Common/5.0.50": {
+        "type": "package",
+        "dependencies": {
+          "PostSharp": "[5.0.50, 6.0.0)",
+          "PostSharp.Patterns.Common.Redist": "[5.0.50]"
+        },
+        "compile": {
+          "lib/net40/_._": {}
+        },
+        "runtime": {
+          "lib/net40/_._": {}
+        }
+      },
+      "PostSharp.Patterns.Common.Redist/5.0.50": {
+        "type": "package",
+        "dependencies": {
+          "PostSharp.Redist": "[5.0.50, 6.0.0)"
+        },
+        "compile": {
+          "lib/net45/PostSharp.Patterns.Common.dll": {}
+        },
+        "runtime": {
+          "lib/net45/PostSharp.Patterns.Common.dll": {}
+        }
+      },
+      "PostSharp.Patterns.Diagnostics/5.0.50": {
+        "type": "package",
+        "dependencies": {
+          "PostSharp.Patterns.Common": "[5.0.50]",
+          "PostSharp.Patterns.Diagnostics.Redist": "[5.0.50]"
+        },
+        "compile": {
+          "lib/net40/_._": {}
+        },
+        "runtime": {
+          "lib/net40/_._": {}
+        }
+      },
+      "PostSharp.Patterns.Diagnostics.Redist/5.0.50": {
+        "type": "package",
+        "dependencies": {
+          "PostSharp.Patterns.Common.Redist": "[5.0.50]"
+        },
+        "compile": {
+          "lib/net45/PostSharp.Patterns.Diagnostics.dll": {}
+        },
+        "runtime": {
+          "lib/net45/PostSharp.Patterns.Diagnostics.dll": {}
+        }
+      },
+      "PostSharp.Patterns.Model/5.0.50": {
+        "type": "package",
+        "dependencies": {
+          "PostSharp.Patterns.Aggregation": "[5.0.50]",
+          "PostSharp.Patterns.Model.Redist": "[5.0.50]"
+        }
+      },
+      "PostSharp.Patterns.Model.Redist/5.0.50": {
+        "type": "package",
+        "dependencies": {
+          "PostSharp.Patterns.Aggregation.Redist": "[5.0.50]"
+        },
+        "compile": {
+          "lib/net40/PostSharp.Patterns.Model.dll": {}
+        },
+        "runtime": {
+          "lib/net40/PostSharp.Patterns.Model.dll": {}
+        }
+      },
+      "PostSharp.Redist/5.0.50": {
+        "type": "package",
+        "compile": {
+          "lib/net45/PostSharp.dll": {}
+        },
+        "runtime": {
+          "lib/net45/PostSharp.dll": {}
+        }
+      },
       "System.Collections/4.3.0": {
         "type": "package",
         "frameworkAssemblies": [
@@ -731,6 +844,119 @@
         },
         "runtime": {
           "lib/net45/Newtonsoft.Json.dll": {}
+        }
+      },
+      "PostSharp/5.0.50": {
+        "type": "package",
+        "dependencies": {
+          "PostSharp.Redist": "[5.0.50, 6.0.0)"
+        },
+        "compile": {
+          "lib/net35-client/_._": {}
+        },
+        "runtime": {
+          "lib/net35-client/_._": {}
+        },
+        "build": {
+          "build/PostSharp.props": {},
+          "build/PostSharp.targets": {}
+        }
+      },
+      "PostSharp.Patterns.Aggregation/5.0.50": {
+        "type": "package",
+        "dependencies": {
+          "PostSharp.Patterns.Aggregation.Redist": "[5.0.50]",
+          "PostSharp.Patterns.Common": "[5.0.50]"
+        }
+      },
+      "PostSharp.Patterns.Aggregation.Redist/5.0.50": {
+        "type": "package",
+        "dependencies": {
+          "PostSharp.Patterns.Common.Redist": "[5.0.50]"
+        },
+        "compile": {
+          "lib/net45/PostSharp.Patterns.Aggregation.dll": {}
+        },
+        "runtime": {
+          "lib/net45/PostSharp.Patterns.Aggregation.dll": {}
+        }
+      },
+      "PostSharp.Patterns.Common/5.0.50": {
+        "type": "package",
+        "dependencies": {
+          "PostSharp": "[5.0.50, 6.0.0)",
+          "PostSharp.Patterns.Common.Redist": "[5.0.50]"
+        },
+        "compile": {
+          "lib/net40/_._": {}
+        },
+        "runtime": {
+          "lib/net40/_._": {}
+        }
+      },
+      "PostSharp.Patterns.Common.Redist/5.0.50": {
+        "type": "package",
+        "dependencies": {
+          "PostSharp.Redist": "[5.0.50, 6.0.0)"
+        },
+        "compile": {
+          "lib/net45/PostSharp.Patterns.Common.dll": {}
+        },
+        "runtime": {
+          "lib/net45/PostSharp.Patterns.Common.dll": {}
+        }
+      },
+      "PostSharp.Patterns.Diagnostics/5.0.50": {
+        "type": "package",
+        "dependencies": {
+          "PostSharp.Patterns.Common": "[5.0.50]",
+          "PostSharp.Patterns.Diagnostics.Redist": "[5.0.50]"
+        },
+        "compile": {
+          "lib/net40/_._": {}
+        },
+        "runtime": {
+          "lib/net40/_._": {}
+        }
+      },
+      "PostSharp.Patterns.Diagnostics.Redist/5.0.50": {
+        "type": "package",
+        "dependencies": {
+          "PostSharp.Patterns.Common.Redist": "[5.0.50]"
+        },
+        "compile": {
+          "lib/net45/PostSharp.Patterns.Diagnostics.dll": {}
+        },
+        "runtime": {
+          "lib/net45/PostSharp.Patterns.Diagnostics.dll": {}
+        }
+      },
+      "PostSharp.Patterns.Model/5.0.50": {
+        "type": "package",
+        "dependencies": {
+          "PostSharp.Patterns.Aggregation": "[5.0.50]",
+          "PostSharp.Patterns.Model.Redist": "[5.0.50]"
+        }
+      },
+      "PostSharp.Patterns.Model.Redist/5.0.50": {
+        "type": "package",
+        "dependencies": {
+          "PostSharp.Patterns.Aggregation.Redist": "[5.0.50]"
+        },
+        "compile": {
+          "lib/net40/PostSharp.Patterns.Model.dll": {}
+        },
+        "runtime": {
+          "lib/net40/PostSharp.Patterns.Model.dll": {}
+        }
+      },
+      "PostSharp.Redist/5.0.50": {
+        "type": "package",
+        "compile": {
+          "lib/net45/PostSharp.dll": {}
+        },
+        "runtime": {
+          "lib/net45/PostSharp.dll": {}
         }
       },
       "System.Collections/4.3.0": {
@@ -1420,6 +1646,146 @@
         "newtonsoft.json.10.0.2.nupkg.sha512",
         "newtonsoft.json.nuspec",
         "tools/install.ps1"
+      ]
+    },
+    "PostSharp/5.0.50": {
+      "sha512": "nsJtlPoaZsLySNFWMK00Aclx4A4Yjjgt8XB8e2mVoVSMjUB9Frf2q26ZKewemdlNmb8f/S0NIKFv26gx6Z8U0A==",
+      "type": "package",
+      "path": "postsharp/5.0.50",
+      "files": [
+        "build/PostSharp-Tools.exe",
+        "build/PostSharp.MSBuild.Core.v5.0.50.Release.dll",
+        "build/PostSharp.MSBuild.v5.0.50.Release.dll",
+        "build/PostSharp.Version.properties",
+        "build/PostSharp.properties",
+        "build/PostSharp.props",
+        "build/PostSharp.targets",
+        "build/PostSharp.tasks",
+        "lib/net35-client/_._",
+        "lib/netcoreapp1.0/PostSharp.Compiler.Client.dll",
+        "lib/netcoreapp1.0/dotnet-compile-postsharp.exe",
+        "lib/netstandard1.0/_._",
+        "postsharp.5.0.50.nupkg.sha512",
+        "postsharp.nuspec"
+      ]
+    },
+    "PostSharp.Patterns.Aggregation/5.0.50": {
+      "sha512": "1lzXli8B/igWHM6O3qTdHwCI1rnRVs2IXSfeGiUT1y72NxrEsV47ZeRVxTa0C8OkUlJVDityWTWiR2hCgM+5fw==",
+      "type": "package",
+      "path": "postsharp.patterns.aggregation/5.0.50",
+      "files": [
+        "postsharp.patterns.aggregation.5.0.50.nupkg.sha512",
+        "postsharp.patterns.aggregation.nuspec"
+      ]
+    },
+    "PostSharp.Patterns.Aggregation.Redist/5.0.50": {
+      "sha512": "79wXeEYNVmdBaKPvrDqNByHpPrh6LQeeCXwVT6/aA6ocqI7q8ygZ/s9gQYIeT1GuXsxF5137jcmLJaDKt9CUPQ==",
+      "type": "package",
+      "path": "postsharp.patterns.aggregation.redist/5.0.50",
+      "files": [
+        "lib/net40/PostSharp.Patterns.Aggregation.dll",
+        "lib/net40/PostSharp.Patterns.Aggregation.xml",
+        "lib/net45/PostSharp.Patterns.Aggregation.dll",
+        "lib/net45/PostSharp.Patterns.Aggregation.xml",
+        "lib/netstandard1.3/PostSharp.Patterns.Aggregation.dll",
+        "lib/netstandard1.3/PostSharp.Patterns.Aggregation.xml",
+        "postsharp.patterns.aggregation.redist.5.0.50.nupkg.sha512",
+        "postsharp.patterns.aggregation.redist.nuspec"
+      ]
+    },
+    "PostSharp.Patterns.Common/5.0.50": {
+      "sha512": "eaIRF0McaAwnZWnZaCEvMrJS+28Z1MHrwAz5tCWe1bxzN4RRqycCR6AVSrnNgpdLRDlbQv9HacwqUJ84PnU5MA==",
+      "type": "package",
+      "path": "postsharp.patterns.common/5.0.50",
+      "files": [
+        "lib/net40/_._",
+        "lib/netstandard1.3/_._",
+        "postsharp.patterns.common.5.0.50.nupkg.sha512",
+        "postsharp.patterns.common.nuspec",
+        "tools/PostSharp.Patterns.Common.Weaver.dll"
+      ]
+    },
+    "PostSharp.Patterns.Common.Redist/5.0.50": {
+      "sha512": "o+lCgiAdfPxlqQyb/mE6fy5c2TGpSx93aWqbL67dQ17Y2hdEN3JK1i7FUOTxZQiplbuOtI3BWjcYR0w/HiuJ/g==",
+      "type": "package",
+      "path": "postsharp.patterns.common.redist/5.0.50",
+      "files": [
+        "lib/net40/PostSharp.Patterns.Common.dll",
+        "lib/net40/PostSharp.Patterns.Common.xml",
+        "lib/net45/PostSharp.Patterns.Common.dll",
+        "lib/net45/PostSharp.Patterns.Common.xml",
+        "lib/net46/PostSharp.Patterns.Common.dll",
+        "lib/net46/PostSharp.Patterns.Common.xml",
+        "lib/netstandard1.3/PostSharp.Patterns.Common.dll",
+        "lib/netstandard1.3/PostSharp.Patterns.Common.xml",
+        "postsharp.patterns.common.redist.5.0.50.nupkg.sha512",
+        "postsharp.patterns.common.redist.nuspec"
+      ]
+    },
+    "PostSharp.Patterns.Diagnostics/5.0.50": {
+      "sha512": "YNeaib3DvrniFRETOe8Ai0aANfLXStOC9jCO+0JPpqeIWBi6f7pe6eLQGGAUf+0Jk0AP/zTyn12dNv5i6C9UtQ==",
+      "type": "package",
+      "path": "postsharp.patterns.diagnostics/5.0.50",
+      "files": [
+        "lib/net40/_._",
+        "lib/netstandard1.3/_._",
+        "postsharp.patterns.diagnostics.5.0.50.nupkg.sha512",
+        "postsharp.patterns.diagnostics.nuspec",
+        "tools/PostSharp.Patterns.Diagnostics.Weaver.dll"
+      ]
+    },
+    "PostSharp.Patterns.Diagnostics.Redist/5.0.50": {
+      "sha512": "/wCZexODXmnvH7ZtO23uJaMlwOGm3D/tuAKmZSALYRqa49BetwKFKKfasE7Qv4cSdLmAYUzYiUs0Qs87aALLnA==",
+      "type": "package",
+      "path": "postsharp.patterns.diagnostics.redist/5.0.50",
+      "files": [
+        "lib/net40/PostSharp.Patterns.Diagnostics.dll",
+        "lib/net40/PostSharp.Patterns.Diagnostics.xml",
+        "lib/net45/PostSharp.Patterns.Diagnostics.dll",
+        "lib/net45/PostSharp.Patterns.Diagnostics.xml",
+        "lib/net46/PostSharp.Patterns.Diagnostics.dll",
+        "lib/net46/PostSharp.Patterns.Diagnostics.xml",
+        "lib/netstandard1.3/PostSharp.Patterns.Diagnostics.dll",
+        "lib/netstandard1.3/PostSharp.Patterns.Diagnostics.xml",
+        "postsharp.patterns.diagnostics.redist.5.0.50.nupkg.sha512",
+        "postsharp.patterns.diagnostics.redist.nuspec"
+      ]
+    },
+    "PostSharp.Patterns.Model/5.0.50": {
+      "sha512": "UHxwnd4Je8aLUbXGSopf7v1JxjaO2lgujfAAytdGIuoK1oRRYA9R+k4Cc9Llt5SIZMJwXbvLjXFqNDyTLK6oHA==",
+      "type": "package",
+      "path": "postsharp.patterns.model/5.0.50",
+      "files": [
+        "postsharp.patterns.model.5.0.50.nupkg.sha512",
+        "postsharp.patterns.model.nuspec"
+      ]
+    },
+    "PostSharp.Patterns.Model.Redist/5.0.50": {
+      "sha512": "K1/I1UcsWnUi829GOY5Hg1mbeJHv3jfDdrgVMrAbf+fGb2D7R8+QS/oPCD2elEc4+AReBWJqmeASVTNvC4PgBA==",
+      "type": "package",
+      "path": "postsharp.patterns.model.redist/5.0.50",
+      "files": [
+        "lib/net40/PostSharp.Patterns.Model.dll",
+        "lib/net40/PostSharp.Patterns.Model.xml",
+        "lib/netstandard1.3/PostSharp.Patterns.Model.dll",
+        "lib/netstandard1.3/PostSharp.Patterns.Model.xml",
+        "postsharp.patterns.model.redist.5.0.50.nupkg.sha512",
+        "postsharp.patterns.model.redist.nuspec"
+      ]
+    },
+    "PostSharp.Redist/5.0.50": {
+      "sha512": "nQ6BfNdzBkwpQXqge6I+YFVDX+GcTrHggt+w5RoC1qFb55tiHyfTV0ksoIGopwWQhwTgZRrisZ86tYfUECfhzQ==",
+      "type": "package",
+      "path": "postsharp.redist/5.0.50",
+      "files": [
+        "lib/net35-client/PostSharp.dll",
+        "lib/net35-client/PostSharp.xml",
+        "lib/net45/PostSharp.dll",
+        "lib/net45/PostSharp.xml",
+        "lib/netstandard1.3/PostSharp.dll",
+        "lib/netstandard1.3/PostSharp.xml",
+        "postsharp.redist.5.0.50.nupkg.sha512",
+        "postsharp.redist.nuspec"
       ]
     },
     "System.Collections/4.3.0": {
@@ -3579,7 +3945,10 @@
   "projectFileDependencyGroups": {
     ".NETFramework,Version=v4.5.2": [
       "Discord.Net >= 1.0.2",
-      "FFmpeg.Nightly >= 20180220.0.0"
+      "FFmpeg.Nightly >= 20180220.0.0",
+      "PostSharp >= 5.0.50",
+      "PostSharp.Patterns.Diagnostics >= 5.0.50",
+      "PostSharp.Patterns.Model >= 5.0.50"
     ]
   },
   "packageFolders": {
@@ -3589,9 +3958,6 @@
   },
   "project": {
     "version": "1.0.0",
-    "restoreSettings": {
-      "hideWarningsAndErrors": true
-    },
     "restore": {
       "projectUniqueName": "C:\\Users\\gillioen\\Documents\\Visual Studio 2017\\Projects\\Bot Test\\BT\\Bot Test.csproj",
       "projectName": "Bot Test",
@@ -3636,6 +4002,18 @@
           "FFmpeg.Nightly": {
             "target": "Package",
             "version": "[20180220.0.0, )"
+          },
+          "PostSharp": {
+            "target": "Package",
+            "version": "[5.0.50, )"
+          },
+          "PostSharp.Patterns.Diagnostics": {
+            "target": "Package",
+            "version": "[5.0.50, )"
+          },
+          "PostSharp.Patterns.Model": {
+            "target": "Package",
+            "version": "[5.0.50, )"
           }
         }
       }

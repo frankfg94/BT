@@ -11,6 +11,7 @@ using System.Drawing;
 using System.Linq;
 using Discord.WebSocket;
 using System.Diagnostics;
+using Discord.Rest;
 
 namespace BT
 {
@@ -28,7 +29,6 @@ namespace BT
         {
             _client = client;
         }
-
 
         [Command("a")]
         public async Task ObtainTheFileAsync()
@@ -101,6 +101,7 @@ namespace BT
                 string name = p.Name;
                 object value = p.GetValue(b);
                 await ReplyAsync(name + " = " + value);
+                Console.WriteLine(name + " = " + value);
             }
         }
 
@@ -454,6 +455,21 @@ namespace BT
         public async Task ReactionParse(Cacheable<IUserMessage, ulong> msg, ISocketMessageChannel msg2, SocketReaction socketReaction)
         {
             ///*await*/ ReplyAsync("Pourquoi ce message ne veut-il pas s'envoyer????");
+            ///
+            
+            if (!socketReaction.User.Value.IsBot && JDR.passageMsgs.Last().Id == msg.Id)
+            {
+         
+                        Console.WriteLine("Choix du passage :   ");
+                        if (socketReaction.Emote.Name == "🛡")
+                            Console.Write("Safe");
+                        else if (socketReaction.Emote.Name == "❗")
+                            Console.Write("Risqué");
+                        else if (socketReaction.Emote.Name == "💎")
+                            Console.Write("Talisman");
+                
+            }
+
             await Console.Out.WriteLineAsync("\n----------------------------------------------------------------------\nRéaction détectée!! " + msg.Id);
             if (qcmList != null)
             {
@@ -476,8 +492,12 @@ namespace BT
                             i++;
                         }       
                     }
-                    
                 }
+            }
+
+
+
+
 
 
 
@@ -488,7 +508,7 @@ namespace BT
 
                 // si le smiley n'est pas le bon, message spécials
 
-            }
+            
         }
 
         public async Task<Qcm> GetQcm(string name)
@@ -548,12 +568,19 @@ namespace BT
         }
 
 
-        static int i = 1; 
+        [Command("next", RunMode = RunMode.Async)]
+        public async Task ChoosePassage()
+        {
+            Room a = new Room();
+            await a.ChoosePassage(Context);
+        }
+
+        static int i = 1;
         [Command("start", RunMode = RunMode.Async)]
         public async Task StartQCM([Remainder] string qcmName)
         {
             Qcm qcm = await GetQcm(qcmName);
-            IMessage msg;
+            IMessage msg = null;
             if (!qcm.HasStarted)
             {
                 Console.WriteLine("Affichage Q1" );
@@ -568,24 +595,30 @@ namespace BT
                 {
                     Console.WriteLine("On arrive à une question de type :" + qcm.questions[i].type);
                     msg = await qcm.DisplayInDiscord(_client.GetChannel(414746672284041222) as ISocketMessageChannel, qcm.questions[i]);
-                    qcm.questionsID.Add(msg.Id);    
+                    qcm.questionsID.Add(msg.Id);
                 }
+                // Tableau des réponses
                 else
                 {
-                    await channel.SendMessageAsync("Vous êtes arrivé au bout de ce QCM");
-                    await channel.SendMessageAsync("Réponses enregistrées : " + qcm.allAnswers.Count );
-                    EmbedBuilder embed = new EmbedBuilder();
-                    int i = 0;
-                    foreach(var ans in qcm.allAnswers)
+                    // Le tableau des réponses ne s'affiche que pour un affichage de type QCM
+                    if(qcm.displayMode == Qcm.DisplayMode.QCM)
                     {
-                        embed.AddField("Votre Réponse "  + ans.Emote.Name , " par " + ans.User.Value.Username);
-                        embed.AddField("Bonne réponse ",qcm.questions[i].answer + ":" + qcm.questions[i].answerLetter);
-                        i++;
+                        await channel.SendMessageAsync("Vous êtes arrivé au bout de ce QCM");
+                        await channel.SendMessageAsync("Réponses enregistrées : " + qcm.allAnswers.Count);
+                        EmbedBuilder embed = new EmbedBuilder();
+                        int i = 0;
+                        foreach (var ans in qcm.allAnswers)
+                        {
+                            embed.AddField("Votre Réponse " + ans.Emote.Name, " par " + ans.User.Value.Username);
+                            embed.AddField("Bonne réponse ", qcm.questions[i].answer + ":" + qcm.questions[i].answerLetter);
+                            i++;
+                        }
+                        await channel.SendMessageAsync("", false, embed);
                     }
-                    await channel.SendMessageAsync("", false, embed);
                 }
-
             }
+           // return msg;
+
         }
 
         [Command("addMany", RunMode = RunMode.Async)]
@@ -656,24 +689,17 @@ namespace BT
             var msg = await ReplyAsync("Hello World");
             await msg.AddReactionAsync(new Emoji("😨"));
             await Context.Client.SetGameAsync("House Party");
-            await Context.Channel.SendMessageAsync("Dans Ping, on peut envoyer comme ici des msgs dans Discord mais apparemment pas dans AudioModule");
             // NE MARCHE PAS AVEC CO DE L'EFREI NI MON TEL !!!!!!!!!!!!
             try
             {
-                // Pas moyen de ne pas avoir d'exception null reference
                 AudioModule am = new AudioModule((AudioService)Program._services.GetService(typeof( AudioService)), Context);
-
-                //if (am == null) Console.WriteLine("L'objet AudioModule n'existe pas");
-                //else Console.WriteLine("L'objet AudioModule OK ");  
-                //if ((AudioService)Program._services.GetService(typeof(AudioService)) == null) Console.WriteLine("L'objet AudioService n'existe pas");
-                //else Console.WriteLine("L'objet AudioService OK ");
                 await am.Test();
             }
             catch(Exception ex)
             {
                 await ReplyAsync(ex.ToString());
             }
-
+                
         }   
 
         [Command("note")]

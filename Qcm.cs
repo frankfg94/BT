@@ -24,12 +24,13 @@ namespace BT
     };
 
 
+
     public class Qcm : ModuleBase<SocketCommandContext>
     {
         public List<SocketReaction> allAnswers = new List<SocketReaction>();
         public string name = "defaut";
         public bool HasStarted = false;
-
+        public DisplayMode displayMode = DisplayMode.QCM;
         public enum CalculType
         {
             Addition = 0,
@@ -82,12 +83,22 @@ namespace BT
         /// <summary>
         /// Ajoute une question de type texte, image ou audio à la position indiquée, si aucune n'est précisée, la question sera rajoutée à la fin du Qcm
         /// </summary>
-        public Question AddQuestion(int type, bool SingleImage = false,TextQuestion tq = TextQuestion.MathContent,int pos = -1)
+        /// 
+
+        public Question AddQuestion(EmbedBuilder content)
+        {
+            Question qToAdd = null;
+            qToAdd.content = content;
+            return qToAdd;
+        }
+
+
+        public Question AddQuestion(int type, bool SingleImage = false, TextQuestion tq = TextQuestion.MathContent, int pos = -1)
         {
             Question qToAdd = null;
             if (type == QType.text)
             {
-                if(tq == TextQuestion.MathContent)
+                if (tq == TextQuestion.MathContent)
                 {
                     CalculType[] valeurs = { CalculType.Addition, CalculType.Multiplication, CalculType.Soustraction };
                     CalculType CalculTypeAleatoire = valeurs[r.Next(valeurs.Length)];
@@ -98,10 +109,10 @@ namespace BT
                 {
                     List<int> IDAll = new List<int>();
 
-                     qToAdd = new Question(null, type, null, "Question Texte");
+                    qToAdd = new Question(null, type, null, "Question Texte");
                     // On ajoute les questions dans l'ordre 
-                     int newRandom = n.Next(0, qCount);
-                    while(uniqueList.Contains(newRandom))
+                    int newRandom = n.Next(0, qCount);
+                    while (uniqueList.Contains(newRandom))
                     {
                         newRandom = n.Next(0, qCount);
                         // On cherche au hasard tant que l'on a pas un bon random
@@ -143,7 +154,7 @@ namespace BT
 
         List<EmbedBuilder> ebListSimple = new List<EmbedBuilder>();
         List<EmbedBuilder> ebListMultiple = new List<EmbedBuilder>();
-        List<string> recognizeThingsPictures = new List<string>(new string[] { "Tank", "JeanneA", "JeuneFillePerle", "SpireDublin" });
+        List<string> recognizeThingsPictures = new List<string>(new string[] { "Tank", "JeanneA", "JeuneFillePerle", "SpireDublin", "SacreNapo", "Alkpote", "Acteur", "Coree", "Spiderman", "Oiseau" });
         Random r = new Random();
         private List<EmbedBuilder> GeneratePictureContent(Question q, ImageQuestion type = ImageQuestion.RecognizePictureSingle)
         {
@@ -154,7 +165,7 @@ namespace BT
                 int randomNumber = r.Next(0, recognizeThingsPictures.Count());
                 string url = null;
                 string name = recognizeThingsPictures[randomNumber];
-                string a, b, c, d ;
+                string a, b, c, d;
                 string title = "Que représente cette image ?";
                 string answer = "Non définie";
                 a = b = c = d = "N/A";
@@ -178,6 +189,7 @@ namespace BT
                         answer = b;
                         break;
                     case "JeuneFillePerle":
+                        // lien ne marche pas
                         url = "https://cdn.radiofrance.fr/s3/cruiser-production/2016/05/5791f11c-4124-45b9-b493-2bd99aace836/738_meisje_met_de_parel.jpg";
                         title = "Quel est l'auteur de ce tableau intitulé 'La jeune fille à la Perle'?";
                         a = "Monet";
@@ -195,18 +207,69 @@ namespace BT
                         d = "La Pointe de Dublin";
                         answer = a;
                         break;
-                    default:
-                        url = "https://blog.sqlauthority.com/i/a/errorstop.png";
-                        q.answer = "Erreur, image non trouvée dans liste";
+                    case "SacreNapo":
+                        title = "En quelle année s'est déroulée cette scène?";
+                        url = "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Jacques-Louis_David%2C_The_Coronation_of_Napoleon_edit.jpg/1200px-Jacques-Louis_David%2C_The_Coronation_of_Napoleon_edit.jpg";
+                        a = "1806";
+                        b = "1807";
+                        c = "1808";
+                        d = "1805";
+                        answer = a;
+                        break;
+                    case "Alkpote":
+                        title = "Quel est le nom de ce rappeur?";
+                        url = "https://www.trunksmagazine.com/wp-content/uploads/2017/07/86d0dd081a35d7e08781c2c889b6a788.1000x1000x1.jpg";
+                        a = "Ninho";
+                        b = "Lartiste";
+                        c = "Alkpote";
+                        d = "Sadek";
+                        answer = c;
+                        break;
+                    case "Acteur":
+                        title = "Quel est le nom de l'acteur sur ce meme?";
+                        url = "http://www.tuxboard.com/photos/2017/02/Kayode-Ewumi-meme-720x416.jpg";
+                        a = "Chadwick Boseman";
+                        b = "Will Smith";
+                        c = "Daniel Kaluuya";
+                        d = "Kayode Ewumi";
+                        answer = d;
+                        break;
+                    case "Coree":
+                        title = "De quand date cette image?";
+                        url = "https://cdn.cnn.com/cnnnext/dam/assets/180426203126-06-korea-summit-0426-exlarge-169.jpg";
+                        a = "avril 2017";
+                        b = "avril 2018";
+                        c = "mars 2018";
+                        d = "mai 2017";
+                        answer = b;
+                        break;
+                    case "Spiderman":
+                        title = "Quel est l'acteur principal de cette série de films?";
+                        url = "https://vignette.wikia.nocookie.net/spiderman/images/5/52/Spider-Man.jpg/revision/latest?cb=20131201182543";
+                        a = "Tobey Maguire";
+                        b = "Andrew Garfield";
+                        c = "Tom Holland";
+                        answer = a;
+                        break;
+                    case "Oiseau":
+                        title = "Quel est cet oiseau?";
+                        url = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Black_eagle.jpg/290px-Black_eagle.jpg";
+                        a = "Aigle royal";
+                        b = "Aigle gris";
+                        c = "Aigle noir";
+                        d = "Buse noire";
+                        answer = c;
                         break;
                 }
 
                 // On met les réponses dans l'ordre dans une première liste
-                List<string> initAnswers = new List<string>();
-                initAnswers.Add(a);
-                initAnswers.Add(b);
-                initAnswers.Add(c);
-                initAnswers.Add(d);
+                List<string> initAnswers = new List<string>
+                {
+                    a,
+                    b,
+                    c,
+                    d
+                };
 
                 // On enregistre la bonne réponse de type texte
                 q.answer = answer;
@@ -258,7 +321,7 @@ namespace BT
                 EmbedBuilder imgEb4 = new EmbedBuilder();
 
                 // r : nombre aléatoire de type Random(), R.Next(a,b) : prendre un nombre aléatoire entre a et b
-                   int randomNumber = r.Next(0, correctImage.Count());
+                int randomNumber = r.Next(0, correctImage.Count());
                 string name = correctImage[randomNumber];
                 string url1, url2, url3, url4 = null;
                 switch (name)
@@ -268,7 +331,7 @@ namespace BT
                         url2 = "http://www.rivagedeboheme.fr/medias/images/vermeer-la-jeune-fille-a-la-perle-1665-1667.jpg";
                         url3 = "https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Cropped_version_of_Jan_Vermeer_van_Delft_002.jpg/260px-Cropped_version_of_Jan_Vermeer_van_Delft_002.jpg";
                         url4 = "https://upload.wikimedia.org/wikipedia/commons/7/78/Pieter_de_Hooch_-_The_Golf_Players_-_c.1658.jpg";
-                        
+
                         ebListMultiple.Add(imgEb1.WithImageUrl(url1).WithTitle("Réponse :regional_indicator_a:"));
                         ebListMultiple.Add(imgEb2.WithImageUrl(url2).WithTitle("Réponse :regional_indicator_b:"));
                         ebListMultiple.Add(imgEb3.WithImageUrl(url3).WithTitle("Réponse :regional_indicator_c:"));
@@ -496,10 +559,10 @@ namespace BT
         }
 
         public enum TextQuestion
-            {
-                DefaultContent = 0,
-                MathContent = 1,
-            }
+        {
+            DefaultContent = 0,
+            MathContent = 1,
+        }
 
         public void UpdateQuestionData(Question q, Object[] data)
         {
@@ -514,17 +577,17 @@ namespace BT
             return ConvertToEmbed(data);
         }
 
-        public EmbedBuilder GenerateMathContent( Question q, CalculType t = CalculType.Multiplication)
+        public EmbedBuilder GenerateMathContent(Question q, CalculType t = CalculType.Multiplication)
         {
             var eb = new EmbedBuilder();
-            if(t == CalculType.Multiplication)
+            if (t == CalculType.Multiplication)
             {
                 int a = n.Next(3, 20);
                 int b = n.Next(3, 20);
                 result = a * b;
                 eb.WithTitle("QCM de mathématiques\n" + a + " * " + b + " = ? ");
             }
-            else if (t == CalculType.Addition)  
+            else if (t == CalculType.Addition)
             {
                 int a = n.Next(100, 2000);
                 int b = n.Next(100, 2000);
@@ -554,12 +617,12 @@ namespace BT
             Console.WriteLine("Reach3   ");
             eb.AddField("a) ", listMel[0]);
             eb.AddField("b) ", listMel[1]);
-            eb.AddField("c) ", listMel[2]); 
+            eb.AddField("c) ", listMel[2]);
             eb.AddField("d) ", listMel[3]);
             if (listMel[0] == result)
-                {
-                    q.answerLetter = ":regional_indicator_a:";
-                }
+            {
+                q.answerLetter = ":regional_indicator_a:";
+            }
             else if (listMel[1] == result)
             {
                 q.answerLetter = ":regional_indicator_b:";
@@ -574,7 +637,7 @@ namespace BT
             }
             Console.WriteLine("Reach4");
 
-            Console.WriteLine("Bonne réponse : " +  q.answerLetter + ":" + q.answer);
+            Console.WriteLine("Bonne réponse : " + q.answerLetter + ":" + q.answer);
 
             // On Enleve avec RemoveAt() l'élément pour ne pas pouvoir le reprendre
 
@@ -583,61 +646,77 @@ namespace BT
         }
 
         private int SimpleID = 0;
-        public async Task<IMessage> DisplayInDiscord(ISocketMessageChannel channel, Question question)
+
+        public enum DisplayMode
+            {
+                QCM,
+                JDR_Passage
+            }
+        public async Task<IMessage> DisplayInDiscord(ISocketMessageChannel channel, Question question, DisplayMode display  = DisplayMode.QCM)
         {
+
             Console.WriteLine("Fonction d'affichage lancée ( Nom : DisplayInDiscord ) ");
             IUserMessage msg;
-            if (question.type == QType.text)
-            {
-                EmbedBuilder eb = (EmbedBuilder)question.content;
-                msg = await channel.SendMessageAsync("DisplayInDiscord()", false, eb);
-                await AddQcmReactions(msg);
-            }
-            else if(question.type == QType.image)
-            {
-                Console.WriteLine("Tentative d'affichage pour type image...");
-                if( question.content.GetType() == typeof(List<EmbedBuilder>)  ) // si plusieurs embeds et donc plusieurs iamges
-                {
-                    List<EmbedBuilder> imagesEb = (List<EmbedBuilder>)question.content;
-                    // Liste d'eb donc liste d'images
-                    if (question.imageQuestion == ImageQuestion.CorrespondingImageMultiple)
-                    {
-                        Console.WriteLine(" Type: images multiples");
-                        foreach (var eb in (List<EmbedBuilder>)question.content)
-                        {
-                            // on envoie chaque image
-                            await channel.SendMessageAsync(question.name, false, eb);
-                        }
-                        // Enfin, on affiche le nom de la question
-                        msg = await channel.SendMessageAsync(question.name);
-                        await AddQcmReactions(msg);
-                    }
-                    else
-                    {
-                        Console.WriteLine(" Type: image seule dans une Liste");
-                        msg = await channel.SendMessageAsync("", false, imagesEb[SimpleID]);
-                        SimpleID++;
-                        await AddQcmReactions(msg);
-                    }
 
-                }
-                else 
+            if(display == DisplayMode.QCM)
+            {
+                if (question.type == QType.text)
                 {
-                    Console.WriteLine("Type: image seule");
-                    // Si ce n'est pas une liste, c'est un seul élément, donc une seule image
                     EmbedBuilder eb = (EmbedBuilder)question.content;
                     msg = await channel.SendMessageAsync("DisplayInDiscord()", false, eb);
                     await AddQcmReactions(msg);
                 }
+                else if (question.type == QType.image)
+                {
+                    Console.WriteLine("Tentative d'affichage pour type image...");
+                    if (question.content.GetType() == typeof(List<EmbedBuilder>)) // si plusieurs embeds et donc plusieurs iamges
+                    {
+                        List<EmbedBuilder> imagesEb = (List<EmbedBuilder>)question.content;
+                        // Liste d'eb donc liste d'images
+                        if (question.imageQuestion == ImageQuestion.CorrespondingImageMultiple)
+                        {
+                            Console.WriteLine(" Type: images multiples");
+                            foreach (var eb in (List<EmbedBuilder>)question.content)
+                            {
+                                // on envoie chaque image
+                                await channel.SendMessageAsync(question.name, false, eb);
+                            }
+                            // Enfin, on affiche le nom de la question
+                            msg = await channel.SendMessageAsync(question.name);
+                            await AddQcmReactions(msg);
+                        }
+                        else
+                        {
+                            Console.WriteLine(" Type: image seule dans une Liste");
+                            msg = await channel.SendMessageAsync("", false, imagesEb[SimpleID]);
+                            SimpleID++;
+                            await AddQcmReactions(msg);
+                        }
+
+                    }
+                    else
+                    {
+                        Console.WriteLine("Type: image seule");
+                        // Si ce n'est pas une liste, c'est un seul élément, donc une seule image
+                        EmbedBuilder eb = (EmbedBuilder)question.content;
+                        msg = await channel.SendMessageAsync("DisplayInDiscord()", false, eb);
+                        await AddQcmReactions(msg);
+                    }
+                }
+                else
+                {
+                    await Console.Out.WriteLineAsync("Pas de type texte ou image");
+                    msg = await channel.SendMessageAsync("Questions de type : " + question.type + " pas encore gérées");
+                    await AddQcmReactions(msg, true);
+                }
+                return msg;
             }
             else
             {
-                await Console.Out.WriteLineAsync("Pas de type texte ou image");
-                 msg = await channel.SendMessageAsync("Questions de type : " + question.type + " pas encore gérées");
-                await AddQcmReactions(msg, true);
+                Console.WriteLine("A faire");
+                return null;
             }
-            return msg;
-
+            
         }
 
 
@@ -656,8 +735,14 @@ namespace BT
 
                 // Problème, la flèche n'est pas reconnue
                 await msg.AddReactionAsync(new Emoji("🇦"));
-               // await msg.AddReactionAsync(new Emoji("➡🇦"));
             }
+
+        }
+
+        public async Task AddQcmReactionCustom(IUserMessage msg, string unicode)
+        {
+
+                await msg.AddReactionAsync(new Emoji(unicode));
 
         }
 

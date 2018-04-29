@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
-using System.Threading;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
@@ -24,7 +23,6 @@ namespace BT
             Console.WriteLine("Starting ...\n");
             new Program().RunBotAsync().GetAwaiter().GetResult();
         }
-        //   public void InitDiscordBot() => new MainWindow().RunBotAsync().GetAwaiter().GetResult();
 
         private DiscordSocketClient _client;
         private CommandService _commands;
@@ -57,7 +55,6 @@ namespace BT
             await _client.StartAsync();
 
             await Task.Delay(-1);
-
             // event subscription  
         }
 
@@ -78,8 +75,7 @@ namespace BT
                 await user.ModifyAsync(x => 
                 {
                      x.Nickname = "[JV]" + x.Nickname;
-                    
-                 }
+                }
                 );
             }
             else if (user.Username.Contains("Mastermanga") )

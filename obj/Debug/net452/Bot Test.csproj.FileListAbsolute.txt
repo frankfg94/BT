@@ -27,10 +27,8 @@ C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\Bot Test2\obj\D
 C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\BT\obj\Debug\net452\Bot Test.csprojResolveAssemblyReference.cache
 C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\BT\obj\Debug\net452\Bot Test.exe.config
 C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\BT\obj\Debug\net452\Bot Test.exe
-C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\BT\obj\Debug\net452\Bot Test.pdb
 C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\BT\bin\Debug\net452\Bot Test.exe.config
 C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\BT\bin\Debug\net452\Bot Test.exe
-C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\BT\bin\Debug\net452\Bot Test.pdb
 C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\BT\bin\Debug\net452\Discord.Net.Commands.dll
 C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\BT\bin\Debug\net452\Discord.Net.Core.dll
 C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\BT\bin\Debug\net452\Discord.Net.Rest.dll
@@ -46,3 +44,12 @@ C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\BT\bin\Debug\ne
 C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\BT\obj\Debug\net452\Bot Test.csproj.CoreCompileInputs.cache
 C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\BT\obj\Debug\net452\Bot Test.AssemblyInfoInputs.cache
 C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\BT\obj\Debug\net452\Bot Test.AssemblyInfo.cs
+C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\BT\obj\Debug\net452\Bot Test.csproj.CopyComplete
+C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\BT\bin\Debug\net452\PostSharp.dll
+C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\BT\bin\Debug\net452\Bot Test.pssym
+C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\BT\obj\Debug\net452\Bot Test.exe.postsharp
+C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\BT\obj\Debug\net452\PostSharpHost.config
+C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\BT\bin\Debug\net452\PostSharp.Patterns.Aggregation.dll
+C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\BT\bin\Debug\net452\PostSharp.Patterns.Common.dll
+C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\BT\bin\Debug\net452\PostSharp.Patterns.Model.dll
+C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\BT\bin\Debug\net452\PostSharp.Patterns.Diagnostics.dll

@@ -30,6 +30,9 @@
   <ItemGroup>
     <PackageReference Include="Discord.Net" Version="1.0.2" />
     <PackageReference Include="FFmpeg.Nightly" Version="20180220.0.0" />
+    <PackageReference Include="PostSharp" Version="5.0.50" />
+    <PackageReference Include="PostSharp.Patterns.Diagnostics" Version="5.0.50" />
+    <PackageReference Include="PostSharp.Patterns.Model" Version="5.0.50" />
   </ItemGroup>
 
 

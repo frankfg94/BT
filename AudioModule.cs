@@ -41,12 +41,12 @@ public class AudioModule : ModuleBase<ICommandContext>
     {
         if(commandContext == null)
         {
-            await Context.Channel.SendMessageAsync("J'ai détecté votre commande, je ne peux pas vous dire si l'audio fonctionne pour le moment");
+           // await Context.Channel.SendMessageAsync("J'ai détecté votre commande, je ne peux pas vous dire si l'audio fonctionne pour le moment");
             await _service.JoinAudio(Context.Guild, (Context.User as IVoiceState).VoiceChannel);
         }
         else
         {
-            await commandContext.Channel.SendMessageAsync("J'ai détecté votre commande, je ne peux pas vous dire si l'audio fonctionne pour le moment");
+           // await commandContext.Channel.SendMessageAsync("J'ai détecté votre commande, je ne peux pas vous dire si l'audio fonctionne pour le moment");
             await _service.JoinAudio(commandContext.Guild, (commandContext.User as IVoiceState).VoiceChannel);
         }
     }
@@ -72,6 +72,21 @@ public class AudioModule : ModuleBase<ICommandContext>
         await PlayCmd(song: @"D:/Téléchargements/koh.mp3");
     }
 
+    [Command("music2", RunMode = RunMode.Async)]
+    public async Task Music2()
+    {
+        await JoinCmd();
+        await PlayCmd(song: "r6.mp3");
+    }
+
+    [Command("doorCloseSFX", RunMode = RunMode.Async)]
+    public async Task DoorCloseSFX()
+    {
+        await JoinCmd();
+        await PlayCmd(song: "roomClose.mp3");
+    }
+
+
     List<IGuildUser> list = new List<IGuildUser>();
 
 
@@ -96,12 +111,12 @@ public class AudioModule : ModuleBase<ICommandContext>
     {
         if(commandContext == null)
         {
-            await Context.Channel.SendMessageAsync("Vous voulez jouer de l'audio! c'est parti :smiley: ");
+          //  await Context.Channel.SendMessageAsync("Vous voulez jouer de l'audio! c'est parti :smiley: ");
             await _service.SendAudioAsync(Context.Guild, Context.Channel, song);
         }
         else
         {
-            await commandContext.Channel.SendMessageAsync("Vous voulez jouer de l'audio! c'est parti :smiley: ");
+           // await commandContext.Channel.SendMessageAsync("Vous voulez jouer de l'audio! c'est parti :smiley: ");
             await _service.SendAudioAsync(commandContext.Guild, commandContext.Channel, song);
         }
     }
