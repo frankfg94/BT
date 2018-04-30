@@ -14,7 +14,7 @@ namespace BT
     public class Player
     {
         private bool dead = false;
-        public CharacterType _type = CharacterType.Unassigned;
+        public int _type;
         public IUser user;
         public string discordRole;
         public RestTextChannel textChannel;
@@ -22,36 +22,39 @@ namespace BT
         public List<Ability> abilities = new List<Ability>();
         private ulong _playerID { get; set; }
         private string _playerName { get; set; }
+        public int votePower = 1;
+        public bool immuneToTraps = false;
 
-
-        public Player(CharacterType type, IUser u)
+        public Player(int type, IUser u)
         {
             _type = type;
             user = u;
             // En fonction du type, on assigne les bonnes compétences et capacités spéciales
-            AssignGoalAndAbilities();
 
-            Console.WriteLine("Assigné : " + Enum.GetName(typeof(CharacterType), _type) + "\npour le joueur: " + u.Username + "\nobjectif: " + goal);
+            AssignGoalAndAbilities();
+            //Console.WriteLine("Assigné : " + Enum.GetName(typeof(CharacterType), _type) + "\npour le joueur: " + u.Username + "\nobjectif: " + goal);
             JDR.allPlayers.Add(this);
+
         }
 
 
         private void AssignGoalAndAbilities()
         {
+            Console.WriteLine("Entrée AssignGoalAndAbilities() ");
             switch (_type)
             {
                 case CharacterType.CaraLoft:
                     goal = Goal.FindTalismans;
-                    var ability = new Ability(Ability.ID.PrepareSurvival, Ability.UsageType.Single);
+                    var ability = new Ability(Ability.ID.PrepareSurvival, Ability.UsageType.Single,this);                       
                     abilities.Add(ability);
                     break;
                 case CharacterType.FBI_Inspector:
                     goal = Goal.Kill.SerialKiller;
-                    var ability2 = new Ability(Ability.ID.ShowFBICard, Ability.UsageType.Single);
+                    var ability2 = new Ability(Ability.ID.ShowFBICard, Ability.UsageType.Single,this);
                     abilities.Add(ability2);
                     break;
                 case CharacterType.MayaSpirit:
-                    var abilityS = new Ability(Ability.ID.ActivateTrap, Ability.UsageType.Single);
+                    var abilityS = new Ability(Ability.ID.ActivateTrap, Ability.UsageType.ForEachRoom);
                     abilities.Add(abilityS);
                     goal = Goal.Protect.Maya;
                     break;
@@ -71,7 +74,7 @@ namespace BT
                     goal = Goal.Kill.Tourist;
                     break;
                 case CharacterType.Tourist:
-                    var ability6 = new Ability(Ability.ID.RevealTrap, Ability.UsageType.Single);
+                    var ability6 = new Ability(Ability.ID.RevealTrap, Ability.UsageType.Single,this);
                     abilities.Add(ability6);
                     goal = Goal.ExitTemple;
                     break;
@@ -80,6 +83,7 @@ namespace BT
                     break;
 
             }
+            Console.WriteLine("Sortie AssignGoalAndAbilities() ");
 
         }
 
@@ -293,6 +297,7 @@ namespace BT
 
         public async Task ShowGoalAsync()
         {
+            Console.WriteLine("Entrée de ShowGoalAsync()");
             string description ;
             string title ;
             string url;
@@ -352,31 +357,67 @@ namespace BT
 
                 // Ne marche pas,tout comme ce qui est Reply Async
 
-
-                var ch = await _context.Guild.CreateTextChannelAsync( Enum.GetName((typeof(CharacterType)),u._type));
-                u.textChannel =  ch;
-                    await ch.SendMessageAsync(string.Empty, false, embed);
+                    u.textChannel= await _context.Guild.CreateTextChannelAsync(u.user.Username);
+                    await u.textChannel.SendMessageAsync(string.Empty, false, embed);
                   //   var perm =  ch.GetPermissionOverwrite(SelectRole("@everyone"));
                   //      perm = perm.Value.Modify(null,null,null,PermValue.Deny);
                   //await ch.AddPermissionOverwriteAsync(SelectRole("@everyone"), perm.Value);
             }
+            Console.WriteLine("Sortie de ShowGoalAsync()");
 
         }
-
 
 
     }
 
 
-    
 
- 
-     public class Ability
+
+
+    public class Ability
     {
-        public Ability(int NameID, int usageType = UsageType.Single)
+        public bool available = true;
+        public Player _target;
+        public Ability(int NameID, int usageType = UsageType.Single, Player target = null)
         {
             identifier = NameID;
             usageMode = usageType;
+            DefineEffectsOnTarget(target);
+        }
+
+        public async Task Use(Player target, SocketCommandContext context)
+        {
+            if(_target!=null)
+            {
+                target = _target;
+                switch(identifier)
+                {
+                    case ID.ShowFBICard:
+                        target.votePower = 2;
+                        await  context.Channel.SendMessageAsync(context.Message.Author.Mention + "A sorti sa carte FBI!\nSon vote compte désormais pour double");
+                        break;
+                    case ID.PrepareSurvival:
+                        target.immuneToTraps = true;
+                        break;
+                    case ID.RevealTrap:
+
+                        break;
+                    default:
+                        Console.WriteLine("erreur d'ID d'ability fonction Use()");
+                        break;
+                }
+            }
+            // Si l'usage est unique, on ne peut utiliser qu'une fois la compétence
+            if(usageMode == UsageType.Single)
+            {
+                available = false;
+            }
+
+        }
+
+        private void DefineEffectsOnTarget(Player character)
+        {
+
         }
         public int identifier;
         public int usageMode;
@@ -398,16 +439,17 @@ namespace BT
         }
     }
 
-    public enum CharacterType
+    public static class CharacterType
     {
-        MayaSpirit = 0,
-        MayaSucessor = 1,
-        FBI_Inspector = 2,
-        SerialKiller = 3,
-        Tourist = 4,
-        NaziSoldier = 5,
-        CaraLoft = 6,
-        Unassigned = 7
+        public static Player player;
+        public const int MayaSpirit = 0;
+        public const int MayaSucessor = 1;
+        public const int FBI_Inspector = 2;
+        public const int SerialKiller = 3;
+        public const int Tourist = 4;
+        public const int NaziSoldier = 5;
+        public const int CaraLoft = 6;
+        public const int Unassigned = 7;
     }
 
     public  class Goal

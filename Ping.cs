@@ -452,22 +452,32 @@ namespace BT
             }
         }
 
+        List<IUser> voter = new List<IUser>();
         public async Task ReactionParse(Cacheable<IUserMessage, ulong> msg, ISocketMessageChannel msg2, SocketReaction socketReaction)
         {
             ///*await*/ ReplyAsync("Pourquoi ce message ne veut-il pas s'envoyer????");
             ///
             
-            if (!socketReaction.User.Value.IsBot && JDR.passageMsgs.Last().Id == msg.Id)
+            if (!socketReaction.User.Value.IsBot && JDR.passageMsgs.Last().Id == msg.Id && !voter.Contains(socketReaction.User.Value))
             {
-         
+                voter.Add(msg.Value.Author);
+                        var structActuelle = (JDR.map.allStructures[JDR.currentStructureID] as Room);
                         Console.WriteLine("Choix du passage :   ");
                         if (socketReaction.Emote.Name == "🛡")
-                            Console.Write("Safe");
+                         {
+                                  Console.Write("Safe");
+                                  structActuelle.VotePassage(PassageType.Safe);
+                         }
                         else if (socketReaction.Emote.Name == "❗")
-                            Console.Write("Risqué");
-                        else if (socketReaction.Emote.Name == "💎")
-                            Console.Write("Talisman");
-                
+                         {
+                                  Console.Write("Risqué");
+                                  structActuelle.VotePassage(PassageType.Risky);
+                         }
+                         else if (socketReaction.Emote.Name == "💎")
+                         {
+                                  Console.Write("Talisman");
+                                   structActuelle.VotePassage(PassageType.Talisman);
+                        }
             }
 
             await Console.Out.WriteLineAsync("\n----------------------------------------------------------------------\nRéaction détectée!! " + msg.Id);
@@ -568,12 +578,12 @@ namespace BT
         }
 
 
-        [Command("next", RunMode = RunMode.Async)]
-        public async Task ChoosePassage()
-        {
-            Room a = new Room();
-            await a.ChoosePassage(Context);
-        }
+        //[Command("next", RunMode = RunMode.Async)]
+        //public async Task ChoosePassage()
+        //{
+        //    Room a = new Room();
+        //    await a.ChoosePassage(Context);
+        //}
 
         static int i = 1;
         [Command("start", RunMode = RunMode.Async)]

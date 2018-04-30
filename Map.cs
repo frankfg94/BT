@@ -7,11 +7,12 @@ using System.Threading.Tasks;
 
 namespace BT
 {
-    class Map
+    public class Map
     {
-        public  List<Structure> allStructures = new List<Structure>();
+        public List<Structure> allStructures = new List<Structure>();
         string schema = string.Empty;
         private int currentStructID = 0;
+        public static int numberOfRoom = 0;
         enum StructureType { Room,/* RiskyPassage, SafePassage, TalismanPassage,*/ ThreePassages}
         public Map (int nbSalles)
         {
@@ -24,6 +25,67 @@ namespace BT
         }
 
 
+        Random random = new Random();
+        /// <summary>
+        /// Permet d'autoriser un placement de pistolet dans l'une des salles avec une probabilité que le pistolet existe dans toute la partie  de 0,5
+        /// </summary>
+        public void PistolPossible(double proba = 0.5)
+        {
+            Console.WriteLine("Entrée PistolPossible()");
+            var aleat = random.NextDouble();
+            if(aleat <= proba)
+            {
+                PlacePistol();
+            } 
+            Console.WriteLine("PistolPossible(), le pistolet n'a pas été placé");
+        }
+
+        private void PlacePistol()
+        {
+            //foreach(var s in allStructures)
+            //{
+            //    if(s.GetType() == typeof(Room))
+            //    {
+            //        roomList.Add(s as Room);
+            //    }
+            //    Console.WriteLine("PlacePistol(), "+ roomList.Count + " salles détectées");
+            //}
+
+            Console.WriteLine("PlacePistol(), il y'a " + Map.numberOfRoom + " salles");
+            int roomWithPistolID = random.Next(0, Map.numberOfRoom);
+
+            // On ne parcourt que les salles 
+            int i = 0;
+            foreach(Room s in allStructures.OfType<Room>())
+            {
+                if(i == roomWithPistolID)
+                {
+                    s.hasPistol = true;
+                }
+                i++;
+            }
+
+            // Affichage 
+            Console.WriteLine("\n\n---------------------------------------------");
+            var roomList = new List<Room>();
+            roomList = allStructures.OfType<Room>().ToList();
+            int j = 1;
+                foreach(var r in roomList)
+                {
+                Console.WriteLine("Salle: " + j);
+                if (r.hasPistol)
+                    {
+                        Console.WriteLine("Contient un pistolet");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Ne contient pas un pistolet");
+                    }
+                j++;
+                }
+            Console.WriteLine("---------------------------------------------\n\n");
+
+        }
 
         public string GetMiniMap()
         {
@@ -84,9 +146,7 @@ namespace BT
 
         public async Task MoveToNextStructure(SocketCommandContext context)
         {
-            Console.WriteLine("Enter1");
-            await allStructures[currentStructID].ShowIllustration(context);
-            currentStructID++;
+
         }
 
         public void MoveToPrecedentStructure()
