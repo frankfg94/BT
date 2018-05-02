@@ -457,52 +457,81 @@ namespace BT
         {
             ///*await*/ ReplyAsync("Pourquoi ce message ne veut-il pas s'envoyer????");
             ///
-            
-            if (!socketReaction.User.Value.IsBot && JDR.passageMsgs.Last().Id == msg.Id && !voter.Contains(socketReaction.User.Value))
-            {
-                voter.Add(msg.Value.Author);
-                        var structActuelle = (JDR.map.allStructures[JDR.currentStructureID] as Room);
-                        Console.WriteLine("Choix du passage :   ");
-                        if (socketReaction.Emote.Name == "🛡")
-                         {
-                                  Console.Write("Safe");
-                                  structActuelle.VotePassage(PassageType.Safe);
-                         }
-                        else if (socketReaction.Emote.Name == "❗")
-                         {
-                                  Console.Write("Risqué");
-                                  structActuelle.VotePassage(PassageType.Risky);
-                         }
-                         else if (socketReaction.Emote.Name == "💎")
-                         {
-                                  Console.Write("Talisman");
-                                   structActuelle.VotePassage(PassageType.Talisman);
-                        }
-            }
 
             await Console.Out.WriteLineAsync("\n----------------------------------------------------------------------\nRéaction détectée!! " + msg.Id);
+
+
             if (qcmList != null)
             {
-                foreach(var qcm in qcmList)
+                await Console.Out.WriteAsync("\nil existe au moins un QCM... OK");
+                foreach (var qcm in qcmList)
                 {
                     if (qcm.HasStarted)
                     {
-                        if (qcm.questionsID.Contains(socketReaction.MessageId) && !socketReaction.User.Value.IsBot)
-                            // On empèche le bot de détecter ses propres réactions (quand il affiche les 4 réponses possibles), et si on regarde si le message appartient à la liste des questions
+                        await Console.Out.WriteAsync("\nQCM commencé, analyse de la réaction...");
+                        if (qcm.questionsID.Contains(socketReaction.MessageId) )
                         {
-                            qcm.allAnswers.Add(socketReaction);
-                            await Console.Out.WriteLineAsync("\nMessage cliqué appartient à liste des questions -->" );
-                            Console.ForegroundColor = ConsoleColor.Green;
-                            Console.Write("True\n");
-                            Console.ForegroundColor = ConsoleColor.White;
-                            await Console.Out.WriteLineAsync("On passe à Q"+ i);
-                            //await ReplyAsync("Reaction détectée");
-                            //await DisplayCitation();
-                            await StartQCM(qcm.name);
-                            i++;
-                        }       
+                            await Console.Out.WriteAsync("\n --> Ce message appartient au QCM... OK");
+                            if (!socketReaction.User.Value.IsBot)
+                            // On empèche le bot de détecter ses propres réactions (quand il affiche les 4 réponses possibles), et si on regarde si le message appartient à la liste des questions
+                            {
+                                await Console.Out.WriteAsync("\n --> Cette réaction n'est pas celle d'un bot OK...");
+                                await Console.Out.WriteAsync("Terminée");
+                                qcm.allAnswers.Add(socketReaction);
+                                await Console.Out.WriteLineAsync("\nMessage cliqué appartient à liste des questions -->");
+                                Console.ForegroundColor = ConsoleColor.Green;
+                                Console.Write("True\n");
+                                Console.ForegroundColor = ConsoleColor.White;
+                                await Console.Out.WriteLineAsync("On passe à Q" + i);
+                                await StartQCM(qcm.name);
+                                i++;
+                            }
+                            else
+                            {
+                                await Console.Out.WriteAsync("\n --> Cette réaction est celle d'un bot ARRET...");
+                            }
+                        }
+
+                        else
+                        {
+                            await Console.Out.WriteAsync("Echec, cette reaction n'appartient pas à un message de QCM");
+                        }
                     }
                 }
+            }
+            else if (!socketReaction.User.Value.IsBot && JDR.passageMsgs.Last().Id == msg.Id) /*&& !voter.Contains(socketReaction.User.Value)*/
+            {
+                if(JDR.hasStarted)
+                {
+                    Console.WriteLine("Message de passage JDR");
+                    //voter.Add(msg.Value.Author);
+                    var structActuelle = (JDR.map.allStructures[JDR.currentStructureID] as Room);
+                    Console.WriteLine("Choix du passage :   ");
+                    if (socketReaction.Emote.Name == "🛡")
+                    {
+                        Console.Write("Safe");
+                        structActuelle.VotePassage(PassageType.Safe);
+                    }
+                    else if (socketReaction.Emote.Name == "❗")
+                    {
+                        Console.Write("Risqué");
+                        structActuelle.VotePassage(PassageType.Risky);
+                    }
+                    else if (socketReaction.Emote.Name == "💎")
+                    {
+                        Console.Write("Talisman");
+                        structActuelle.VotePassage(PassageType.Talisman);
+                    }
+                }
+                else
+                {
+                    await Console.Out.WriteLineAsync("Le JDR n'a pas été commencé " + msg.Id);
+                }
+            }
+            else
+            {
+                await Console.Out.WriteLineAsync("Non reconnu");
+
             }
 
 
@@ -511,14 +540,14 @@ namespace BT
 
 
 
-                // si oui, on examine si la reaction est sur le bon embed builder
-                
+            // si oui, on examine si la reaction est sur le bon embed builder
 
-                // si elle n'est pas la bonne réponse, on la supprime
 
-                // si le smiley n'est pas le bon, message spécials
+            // si elle n'est pas la bonne réponse, on la supprime
 
-            
+            // si le smiley n'est pas le bon, message spécials
+
+
         }
 
         public async Task<Qcm> GetQcm(string name)
@@ -593,10 +622,10 @@ namespace BT
             IMessage msg = null;
             if (!qcm.HasStarted)
             {
+                qcm.HasStarted = true;
                 Console.WriteLine("Affichage Q1" );
                 msg = await qcm.DisplayInDiscord(_client.GetChannel(414746672284041222) as ISocketMessageChannel, qcm.questions[0]);
                 qcm.questionsID.Add(msg.Id);
-                qcm.HasStarted = true;
             }
             else //Problème réussir à bloquer l'affichage Q2 cad ignorer le dernier smiley
             { 

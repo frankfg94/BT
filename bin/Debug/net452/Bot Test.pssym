@@ -1,2 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Symbols LinesOfCode="341" PostSharpLinesOfCode="0" EnhancedTypesCount="0" SchemaVersion="1" PostSharpVersion="5.0.50.0" xmlns="http://schemas.postsharp.org/2.0/symbols" />
+<Symbols LinesOfCode="356" PostSharpLinesOfCode="0" EnhancedTypesCount="1" SchemaVersion="1" PostSharpVersion="5.0.50.0" xmlns="http://schemas.postsharp.org/2.0/symbols">
+  <Evolution Source="#1=F:[Bot Test]BT.Player::_context" Target="#2=F:[Bot Test]BT.Player::&lt;_context&gt;k__OriginalField" />
+  <Evolution Source="#2" Target="#3=P:[Bot Test]BT.Player::_context()" />
+  <Class Class="#4=T:[PostSharp.Patterns.Common]PostSharp.Patterns.Contracts.RequiredAttribute">
+    <Instance Declaration="#2" Id="7fefc657acd99984">
+      <Target>
+        <JoinPoint Advising="#4" Description="#5=Validates the assigned value" Semantic="Setter" Ordinal="0" LinesAvoided="4" />
+      </Target>
+    </Instance>
+  </Class>
+  <Annotation Target="#6=M:[PostSharp.Patterns.Common]PostSharp.Patterns.Contracts.RequiredAttribute::ValidateValueObject(System.Object, System.String, PostSharp.Reflection.LocationKind, PostSharp.Aspects.LocationValidationContext)" Arguments="#7=2" Description="#8=PostSharp estimates that 2 line(s) of code are saved every time this advice is applied. Use the [LinesOfCodeAvoided] attribute on the aspect or specify the LinesOfCodeAvoided property on the advice attribute to override this value." />
+  <Annotation Target="#9=M:[PostSharp.Patterns.Common]PostSharp.Patterns.Contracts.RequiredAttribute::ValidateValueString(System.String, System.String, PostSharp.Reflection.LocationKind, PostSharp.Aspects.LocationValidationContext)" Arguments="#7" Description="#8" />
+</Symbols>

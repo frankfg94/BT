@@ -16,8 +16,9 @@ namespace BT
         protected string name;
         // En mettant id en protected, cela permet d'y accèder dans les classes filles
         public  int id = 0;
+        public AudioModule am;
         public EmbedBuilder illustration;
-        protected Trap piege;
+        public List<Trap> allTraps = new List<Trap>();
         public async Task ShowIllustration(SocketCommandContext context)
         {
             Console.WriteLine("Enter2");
@@ -123,6 +124,7 @@ namespace BT
             }
         }
 
+        Random r = new Random();
         public void SelectPassageWithVotes(int CurrentStructid)
         {
             Console.WriteLine("Structure actuelle: " + CurrentStructid + "\n");
@@ -134,11 +136,30 @@ namespace BT
             if (voteTalis > voteSafe && voteTalis > voteRisky)
                 (JDR.map.allStructures[CurrentStructid] as Passages).passages[2].isSelected = true;
 
-            if (voteTalis == voteSafe && voteSafe == voteRisky && voteTalis == voteRisky && voteTalis == 0)
+            if (voteTalis == voteSafe && voteSafe == voteRisky && voteTalis == voteRisky )
             {
-                Console.WriteLine("Aucun vote n'a été effectué");
+                Console.ForegroundColor = ConsoleColor.Magenta;
+                Console.WriteLine("Egalité des votes, choix d'un passage aléatoire");
+                Console.ForegroundColor = ConsoleColor.Gray;
+                int i = 10;
+                int chosenPassage = r.Next(0,3);
+                if(chosenPassage == 0)
+                {
+                    (JDR.map.allStructures[CurrentStructid] as Passages).passages[0].isSelected = true;
+                    (JDR.map.allStructures[CurrentStructid] as Passages).passages[0].isSelectedRandomly = true;
+                }
+                else if (chosenPassage == 1)
+                {
+                    (JDR.map.allStructures[CurrentStructid] as Passages).passages[1].isSelected = true;
+                    (JDR.map.allStructures[CurrentStructid] as Passages).passages[1].isSelectedRandomly = true;
+                }
+                else if (chosenPassage == 2)
+                {
+                    (JDR.map.allStructures[CurrentStructid] as Passages).passages[2].isSelected = true;
+                    (JDR.map.allStructures[CurrentStructid] as Passages).passages[2].isSelectedRandomly = true;
+                }
             }
-            
+
             Console.Write("     Terminée");
             Console.WriteLine("\nS:" + voteSafe + "\nR:"+ voteRisky + "\nT:"+ voteTalis);
         }
@@ -193,7 +214,11 @@ namespace BT
                     {
                        if(passage.isSelected)
                        {
-                        await context.Channel.SendMessageAsync("Passage sélectionné !  :" + passage.GetName());
+                        if(passage.isSelectedRandomly)
+                        {
+                            await context.Channel.SendMessageAsync("Comme les aventuriers n'ont pas pu se départager, un des passages est choisi aléatoirement");
+                        }
+                        await context.Channel.SendMessageAsync("Passage sélectionné !  : " + passage.GetName());
                         if(passage.GetName() == "passage Talisman")
                             if(JDR.map.allStructures[id + 2] != null)
                             (JDR.map.allStructures[id + 2] as Room).illustration.Title = ":gem: Salle au Talisman";
@@ -202,9 +227,10 @@ namespace BT
                        }
 
                 }
-                AudioModule am = new AudioModule((AudioService)Program._services.GetService(typeof(AudioService)), context);
+                 am = new AudioModule((AudioService)Program._services.GetService(typeof(AudioService)), context);
                 try { await am.DoorCloseSFX(); }
                 catch (Exception ex) { Console.WriteLine(ex); }
+                await context.Client.StopAsync();
                 await context.Channel.SendMessageAsync("En route vers le passage !");
             }
             else
@@ -219,6 +245,7 @@ namespace BT
         List<Player> playerOrder;
         protected int votes;
         public bool isSelected = false;
+        public bool isSelectedRandomly = false;
         protected string name;
         public string GetName()
         {

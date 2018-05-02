@@ -23,11 +23,8 @@ namespace BT
         //{
         //    Context = _context;   
         //}
-        ~JDR()
-        {
-            allPlayers = null;
-            Console.WriteLine("Destruction du JDR");
-        }
+
+        public static bool hasStarted;
         public static SocketCommandContext _context;
         public static Map map;
         private RestVoiceChannel mainVoiceChannel;
@@ -73,6 +70,7 @@ namespace BT
             await ReplyAsync("2");
             System.Threading.Thread.Sleep(1000);
             await ReplyAsync("1");
+            await Context.Client.StopAsync();
         }
 
         // Permet d'éviter plusieurs fois les mêmes chaines à chaque fois qu'on lance un JDR exemple : Joueurs en attente, Joueurs en attente, Joueurs en attente (3 channels vocals
@@ -175,14 +173,15 @@ namespace BT
             Console.WriteLine("2");
             foreach (var u in voiceUsers)
             {
-                Player p = new Player(ctRandomized[ID], u);
-                Console.WriteLine("Alpha");
-                ID++;
-                PlayerDisplay display = new PlayerDisplay(Context);
-                await display.ShowGoalAsync();
-                display.AddRoleToPlayer(p);
-                await display.ShowAbilitiesAsync();
-
+                if(!u.IsBot)
+                {
+                    Player p = new Player(ctRandomized[ID], u, Context);
+                    ID++;
+                    PlayerDisplay display = new PlayerDisplay(Context);
+                    await display.ShowGoalAsync();
+                    display.AddRoleToPlayer(p);
+                    await display.ShowAbilitiesAsync();
+                }
             }
             Console.WriteLine("Sortie ShowRolesDiscordAsync()");
         }
@@ -202,8 +201,10 @@ namespace BT
             {
                 allPlayers.Remove(p);
             }
-           await (p.user as SocketGuildUser).ModifyAsync(x => x.Nickname = "[MORT]" + p.user.Username);
+           if(p.user.Id != 353243323592605699) await (p.user as SocketGuildUser).ModifyAsync(x => x.Nickname = "[MORT]" + p.user.Username);
         }
+
+
 
 
 
@@ -211,110 +212,175 @@ namespace BT
         [Command("startJDR", RunMode = RunMode.Async)]
         public async Task StartGameAsync()
         {
-
-
-            await mainVoiceChannel.ModifyAsync(x=>x.Name="Joueurs du JDR");
-            if(allPlayers.Count > 0)
+            try
             {
-                // Calcul d'aléatoire de début de partie pour le pistolet
-                if (map != null)
-                    map.PistolPossible(1);
+                if(mainVoiceChannel!=null)
+                    await mainVoiceChannel.ModifyAsync(x => x.Name = "Joueurs du JDR");
+                if (allPlayers.Count > 0)
+                {
+                    // Calcul d'aléatoire de début de partie pour le pistolet
+                    if (map != null)
+                        map.PistolPossible(1);
+                    else
+                        Console.WriteLine("Aucune map crée");
+
+                    // Placement du talisman dans la première salle
+                    var random = r.NextDouble();
+                    if (random <= 1)
+                    {
+                        map.allStructures.OfType<Room>().First().SetTalisman(true);
+                        Console.WriteLine("La structure " + map.allStructures.OfType<Room>().First().id + " possède le talisman");
+                    }
+
+                    // On renomme la dernière salle en salle finale
+                    var lastRoom = map.allStructures.OfType<Room>().Last();
+                    lastRoom.illustration.Title = lastRoom.illustration.Title + " (Salle finale)";
+
+                    hasStarted = true;
+
+                    // Entrée du batiment
+                    Console.WriteLine("Nombre de structures " + map.allStructures.Count);
+                    if (currentStructureID == 0)
+                    {
+                        string introTxt = "Intro";
+                        EmbedBuilder eb = new EmbedBuilder
+                        {
+                            Title = "Temple Maya - " + allPlayers.Count + " joueurs",
+                            Description = introTxt,
+                            ImageUrl = "https://s-media-cache-ak0.pinimg.com/originals/f0/73/06/f07306ec3a8f66709791aaadf8cc77c1.jpg"
+                        };
+                        await ReplyAsync("", false, eb);
+                    }
+
+                    // Parcours des salles
+                    for (int id = 0; id < map.allStructures.Count; id++)
+                    {
+                       // Thread.Sleep(10000);
+                        await _context.Channel.SendMessageAsync("On passe à la structure suivante / NOUVELLE ITERATION");
+                        Console.WriteLine("Structure actuelle" + id);
+                        if (map.allStructures[id].GetType() == typeof(Room) && id != map.allStructures.Count - 1)
+                        {
+
+                            await ProposeAbilityUse();
+                            Console.WriteLine("Sortie de ProposeAbilityUse()");
+                           // Thread.Sleep(10000);
+                            Console.WriteLine("Pièce de type salle");
+
+                            // On montre la salle
+                            await ReplyAsync("Calculs de probabilités pour la Salle");
+                            var room = (map.allStructures[id] as Room);
+                            await room.ShowIllustration(Context);
+
+                            // On regarde et on assigne un pistolet
+                            await CheckPistol(room);
+
+                            // L'esprit Maya demande si on sacrifie un joueur
+                            await ProposeSacrifice();
+
+                           // Thread.Sleep(10000);
+
+                            // On choisit le passage
+                            await room.ChoosePassage(Context, currentStructureID, map);
+                            currentRoomID++;
+                        }
+                        else // Sinon c'est passage
+                        {
+                            await ReplyAsync("Calculs de probabilités pour le passage");
+                            var pass = map.allStructures[currentStructureID];
+                            await pass.ShowIllustration(Context);
+
+                            // On affiche l'ordre de passage en mélangeant la liste des joueurs
+                            await ReplyAsync("__ Ordre de passage __ ");
+                            var randomizedPlayers = allPlayers.OrderBy(x => r.Next()).ToList();
+
+                            string playerList = string.Empty;
+                            foreach (var p in randomizedPlayers)
+                            {
+                                playerList += p.user.Username;
+                                if (p != randomizedPlayers.Last())
+                                    playerList += " :arrow_right: ";
+                            }
+                            await ReplyAsync(playerList);
+                            if(pass.allTraps.Count > 0)
+                            {
+                                await ReplyAsync(":skull: Vous avez repéré " + pass.allTraps.Count + " piège pour ce passage");
+                                foreach (var trap in pass.allTraps)
+                                {
+                                    await trap.ShowIllustration(Context);                                    
+                                    for (int i = 0; i < randomizedPlayers.Count; i++)
+                                    {
+                                        await ReplyAsync((i +1)+ " ) " + randomizedPlayers[i].user.Username + " passe à travers le piège...");
+                                        await trap.PlayerWalkOnMe(randomizedPlayers[i], Context);
+                                        if(deadPlayers.Contains(randomizedPlayers[i]))
+                                        {
+                                            await ReplyAsync(randomizedPlayers[i].user.Mention + " vient de mourrir !!\n :information_source:  Le piège est maintenant désactivé");
+                                        }
+                                        if(randomizedPlayers.Count == 0)
+                                        {
+                                            await ReplyAsync("JDR terminé, tout le monde est mort"); 
+                                        }
+                                    }
+                                }
+
+                            }
+
+                        }
+                        currentStructureID++;
+
+                    }
+
+                    // Sortie du batiment
+                    if (currentStructureID == map.allStructures.Count)
+                    {
+                        string outroTxt = "Outro";
+                        EmbedBuilder eb = new EmbedBuilder
+                        {
+                            Title = "Temple Maya - " + allPlayers.Count + " joueurs",
+                            Description = outroTxt,
+                            ImageUrl = "http://moonshineink.com/sites/default/files/so_a_offroad_multiplejeeps.tiff_web.jpg"
+                        };
+                        await ReplyAsync("Tableau récapitulatif", false, eb);
+                        var jdrPlayers = new List<Player>() ;
+                        List<Player> deadAndAlivePlayers = new List<Player>();
+                        deadAndAlivePlayers=   Enumerable.Union(allPlayers,deadPlayers).ToList();
+                    }
+                }
                 else
-                    Console.WriteLine("Aucune map crée");
-
-                // Placement du talisman dans la première salle
-                var random = r.NextDouble();
-                if (random <= 1)
                 {
-                    map.allStructures.OfType<Room>().First().SetTalisman(true);
-                    Console.WriteLine("La structure " + map.allStructures.OfType<Room>().First().id + " possède le talisman");
-                }
-
-
-                // On renomme la dernière salle en salle finale
-                var lastRoom = map.allStructures.OfType<Room>().Last();
-                lastRoom.illustration.Title = lastRoom.illustration.Title + " (Salle finale)";
-
-                // Entrée du batiment
-                Console.WriteLine("Nombre de structures " + map.allStructures.Count);
-                if (currentStructureID == 0)
-                {
-                    string introTxt = "Intro";
-                    EmbedBuilder eb = new EmbedBuilder
-                    {
-                        Title = "Temple Maya - " + allPlayers.Count + " joueurs",
-                        Description = introTxt,
-                        ImageUrl = "https://s-media-cache-ak0.pinimg.com/originals/f0/73/06/f07306ec3a8f66709791aaadf8cc77c1.jpg"
-                    };
-                    await ReplyAsync("", false, eb);
-                }
-
-                // Parcours des salles
-                for (int id = 0; id < map.allStructures.Count; id++)
-                {
-                    Thread.Sleep(10000);
-                    await _context.Channel.SendMessageAsync("On passe à la structure suivante / NOUVELLE ITERATION");
-                    Console.WriteLine("Structure actuelle" + id);
-                    if (map.allStructures[id].GetType() == typeof(Room) && id != map.allStructures.Count - 1)
-                    {
-                        
-                        await ProposeAbilityUse();
-                        Console.WriteLine("Sortie de ProposeAbilityUse()");
-                        Thread.Sleep(10000);
-                        Console.WriteLine("Pièce de type salle");
-                        await (map.allStructures[id] as Room).ShowIllustration(Context);
-                        // On regarde et on assigne un pistolet
-                        await CheckPistol(map.allStructures[id] as Room);
-                        await ProposeSacrifice();
-                         Thread.Sleep(10000);
-                        await (map.allStructures[id] as Room).ChoosePassage(Context, currentStructureID, map);
-                        currentRoomID++;
-                    }
-                    else // Sinon c'est passage
-                    {
-                        await map.allStructures[currentStructureID].ShowIllustration(Context);
-                    }
-                    currentStructureID++;
-
-                }
-
-                // Sortie du batiment
-                if (currentStructureID == map.allStructures.Count)
-                {
-                    string outroTxt = "Outro";
-                    EmbedBuilder eb = new EmbedBuilder
-                    {
-                        Title = "Temple Maya - " + allPlayers.Count + " joueurs",
-                        Description = outroTxt,
-                        ImageUrl = "http://moonshineink.com/sites/default/files/so_a_offroad_multiplejeeps.tiff_web.jpg"
-                    };
-                    await ReplyAsync("Tableau récapitulatif", false, eb);
+                    await ReplyAsync(":warning: Un moins un joueur doit être inscrit pour commencer la partie");
                 }
             }
-            else
+
+            catch (Exception ex)
             {
-                await ReplyAsync(":warning: Un moins un joueur doit être inscrit pour commencer la partie");
+                hasStarted = false;
+                await Console.Out.WriteLineAsync("Erreur JDR:" + ex);
             }
         }
 
         private async Task CheckPistol(Room room)
         {
-            if(room.hasPistol)
+            if (room.hasPistol)
             {
                 var randPlay = allPlayers.OrderBy(x => Guid.NewGuid()).ToList();
-                await ReplyAsync( randPlay[0].user.Mention + "a trouvé un pistolet à poudre !");
+                await ReplyAsync(randPlay[0].user.Mention + " a trouvé un pistolet à poudre !");
+                await randPlay[0].textChannel.SendMessageAsync("OK, c'est bien " + randPlay[0].user.Username + " qui a le Pistolet à poudre");
+                EmbedBuilder embed = new EmbedBuilder();
+                var ab = new Ability(Ability.ID.ShootSomeone, Ability.UsageType.Single);
+                randPlay[0].abilities.Add(ab);
+                await randPlay[0].ShowAbilityInTextChannel(ab);
             }
         }
 
         public async Task ProposeAbilityUse()
         {
             await ReplyAsync(":information_source: Les aventuriers qui le souhaitent peuvent activer une compétence avant d'entrer dans la prochaine salle");
-            foreach(var p in allPlayers)
+            foreach (var p in allPlayers)
             {
-                if(p.textChannel!=null)
+                if (p.textChannel != null)
                 {
                     EmbedBuilder eb = new EmbedBuilder();
-                    eb.Title = "Salle " + JDR.currentRoomID + 1 + " : Utiliser compétence ?";
+                    eb.Title = "Salle " + ( JDR.currentRoomID + 1 )+ " : Utiliser compétence ?";
                     var msg = await p.textChannel.SendMessageAsync("", false, eb);
                     await msg.AddReactionAsync(new Emoji("✔"));
                 }
@@ -354,13 +420,21 @@ namespace BT
         [Command("init", RunMode = RunMode.Async)]
         public async Task InitAsync()
         {
+
             var bot = Context.User;
-            //Player p = new Player(CharacterType.NaziSoldier, await Context.Channel.GetUserAsync(322421524319567882));
+            Player p = new Player(CharacterType.NaziSoldier, await Context.Channel.GetUserAsync(322421524319567882), Context);
             try
             {
                 foreach (var user in Context.Guild.Users)
                 {
+                    if(user.Id != 353243323592605699)
+                    {
+                            await user.ModifyAsync(x => x.Nickname = user.Username);
+                    }
+
                     await DeleteOldChannels(user.Username);
+                    if(user.Nickname!=null)
+                    await DeleteOldChannels(user.Nickname);
                 }
                 await DeleteOldChannels(Context.User.Username, "JDR");
             }
@@ -394,18 +468,18 @@ namespace BT
 
                 // on affiche le nombre d'utilisateurs sur le nom de la chaîne
                 if (count > 1)
-                    await maintTextChannel.ModifyAsync(x => x.Name = maintTextChannel.Name + " " + count);
+                    await maintTextChannel.ModifyAsync(x => x.Name = maintTextChannel.Name + " " + allPlayers.Count +"-J");
                 await Context.Channel.SendMessageAsync("Initialisation effectuée avec succès!");
 
                 // On commence un thread séparé afin de pouvoir lancer la musique en parallèle
-                Thread t = new Thread(async () => await StartIntroMusic());
+                Thread t =    new Thread(async () => await StartIntroMusic());
                 t.Start();
                 await StartCountdown1MIN();
                 ts.Dispose();
                 await ShowMap();
                 await CreateMap(5);
-                await StartGameAsync();
                 await ReplyAsync(map.GetMiniMap());
+                await StartGameAsync();
 
             }
             else

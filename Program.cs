@@ -45,7 +45,7 @@ namespace BT
             await RegistercommandAsync();
             
             _client.UserJoined += AnnounceJoinedUser; //Check if userjoined
-            _client.UserVoiceStateUpdated += VoiceUpdate;
+            _client.ReactionRemoved += ReactionRemoved;
             Ping p = new Ping(_client);
             _client.ReactionAdded += p.ReactionParse;
 
@@ -63,6 +63,12 @@ namespace BT
         {
             var channel = _client.GetChannel(370666551306616845) as SocketTextChannel; //gets channel to send message in
             await channel.SendMessageAsync("Audio mis à jour pour " + user + "\nmuté :"+ state.IsMuted + "\nChaine :"+state.VoiceChannel);
+        }
+
+
+        public async Task ReactionRemoved(Cacheable<IUserMessage,ulong> msg, ISocketMessageChannel channel, SocketReaction reaction)
+        {
+            await Console.Out.WriteLineAsync("Réaction supprimée");
         }
 
         public async Task AnnounceJoinedUser(SocketGuildUser user) //welcomes New Players

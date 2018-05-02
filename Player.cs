@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PostSharp.Patterns.Contracts;
 
 namespace BT
 {
@@ -19,16 +20,19 @@ namespace BT
         public string discordRole;
         public RestTextChannel textChannel;
         public int goal;
+        [Required]
+        private SocketCommandContext _context;
         public List<Ability> abilities = new List<Ability>();
         private ulong _playerID { get; set; }
         private string _playerName { get; set; }
         public int votePower = 1;
         public bool immuneToTraps = false;
 
-        public Player(int type, IUser u)
+        public Player(int type, IUser u, SocketCommandContext context)
         {
             _type = type;
             user = u;
+            _context = context;
             // En fonction du type, on assigne les bonnes compétences et capacités spéciales
 
             AssignGoalAndAbilities();
@@ -36,6 +40,94 @@ namespace BT
             JDR.allPlayers.Add(this);
 
         }
+
+        public async Task ShowAbilityInTextChannel(Ability ability)
+        {
+            Console.WriteLine("entrée de ShowAbilityInTextChannel()");
+            string description;
+            string title;
+            string url;
+            string description2;
+            switch (ability.identifier)
+            {
+                case Ability.ID.ActivateTrap:
+                    title = "Poseur de piège";
+                    description = "Vous pouvez activer un piège une fois par partie";
+                    url = "http://nwamotherlode.com/wp-content/uploads/2016/01/trap-33819_640.png";
+                    break;
+                case Ability.ID.PrepareSurvival:
+                    title = "Survivaliste";
+                    description = "Vous pouvez vous préparer à survivre à un piège une fois par partie";
+                    url = "";
+                    break;
+                case Ability.ID.PushInTrap:
+                    title = "Assassinat";
+                    description = "Vous pouvez pousser un aventurier dans une trappe";
+                    url = "https://d30y9cdsu7xlg0.cloudfront.net/png/39793-200.png";
+                    break;
+                case Ability.ID.RevealTrap:
+                    title = "Sixième sens";
+                    description = "Vous pouvez détecter un piège";
+                    url = "";
+                    break;
+                case Ability.ID.SacrificeSomeone:
+                    title = "Sacrifice";
+                    description = "Vous avez le pouvoir de sacrifier des aventuriers, en demandant un vote à chaque tour";
+                    url = "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Codex_Magliabechiano_%28folio_70r%29.jpg/440px-Codex_Magliabechiano_%28folio_70r%29.jpg";
+                    break;
+                case Ability.ID.SecretConversation:
+                    title = "Micro-oreillette";
+                    description = "Vous pouvez communiquer en secret avec un coéquipier du même type";
+                    url = "";
+                    break;
+                case Ability.ID.ShowFBICard:
+                    title = "Gouvernement";
+                    description = "Vous pouvez montrer votre carte FBI, afin d'augmenter vos votes";
+                    url = "https://img00.deviantart.net/36bd/i/2015/105/f/5/punisher_fbi_card_franck_castle_by_moviecard-d80pkde.jpg";
+                    break;
+                case Ability.ID.ShootSomeone:
+                    title = "Pistolet à poudre";
+                    description = "Vous pouvez tuer un joueur à tout moment, avec 70% de précision";
+                    url = "https://images.frankonia.fr/fsicache/server?type=image&width=720&height=720&effects=pad(CC,ffff)&quality=40&source=products/p113707_ha.jpg";
+                    break;
+                default:
+                    title = "Erreur";
+                    description = "Compétence non reconnue, vérifier l'identifiant de cette dernière";
+                    url = "";
+                    break;
+            }
+            switch (ability.usageMode)
+            {
+                case Ability.UsageType.ForEachRoom:
+                    description2 = "Usage répété";
+                    break;
+                case Ability.UsageType.Single:
+                    description2 = "Usage unique";
+                    break;
+                default:
+                    description2 = "Erreur, type d'usage inconnu";
+                    break;
+            }
+            var footer = new EmbedFooterBuilder
+            {
+                Text = description2
+            };
+            EmbedBuilder embed = new EmbedBuilder
+            {
+                Title = title,
+                Description = description,
+                ImageUrl = url,
+                Footer = footer
+            };
+            if (url == null || url == string.Empty)
+            {
+                embed.ImageUrl = "http://olivierdewyse.com/wp-content/uploads/2015/02/icones_ampoule.png";
+            }
+            ability.illustration = embed;
+            await textChannel.SendMessageAsync("",false,ability.illustration);
+            Console.WriteLine("sortie de ShowAbilityInTextChannel()");
+        }
+
 
 
         private void AssignGoalAndAbilities()
@@ -197,97 +289,14 @@ namespace BT
 
         public async Task ShowAbilitiesAsync()
         {
-            Console.WriteLine("ENTRER");
-            string description;
-            string title;
-            string url;
-            string description2;
+
             var playerList = JDR.allPlayers;
             foreach (var u in playerList)
             {
-                foreach(var ab in u.abilities)
+                foreach (var ab in u.abilities)
                 {
-                    switch (ab.identifier)
-                    {
-                        case Ability.ID.ActivateTrap:
-                            title = "Poseur de piège";
-                            description = "Vous pouvez activer un piège une fois par partie";
-                            url = "http://nwamotherlode.com/wp-content/uploads/2016/01/trap-33819_640.png";
-                            break;
-                        case Ability.ID.PrepareSurvival:
-                            title = "Survivaliste";
-                            description = "Vous pouvez vous préparer à survivre à un piège une fois par partie";
-                            url = "";
-                            break;
-                        case Ability.ID.PushInTrap:
-                            title = "Assassinat";
-                            description = "Vous pouvez pousser un aventurier dans une trappe";
-                            url = "https://d30y9cdsu7xlg0.cloudfront.net/png/39793-200.png";
-                            break;
-                        case Ability.ID.RevealTrap:
-                            title = "Sixième sens";
-                            description = "Vous pouvez détecter un piège";
-                            url = "";
-                            break;
-                        case Ability.ID.SacrificeSomeone:
-                            title = "Sacrifice";
-                            description = "Vous avez le pouvoir de sacrifier des aventuriers, en demandant un vote à chaque tour";
-                            url = "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Codex_Magliabechiano_%28folio_70r%29.jpg/440px-Codex_Magliabechiano_%28folio_70r%29.jpg";
-                            break;
-                        case Ability.ID.SecretConversation:
-                            title = "Micro-oreillette";
-                            description = "Vous pouvez communiquer en secret avec un coéquipier du même type";
-                            url = "";
-                            break;
-                        case Ability.ID.ShowFBICard:
-                            title = "Gouvernement";
-                            description = "Vous pouvez montrer votre carte FBI, afin d'augmenter vos votes";
-                            url = "https://img00.deviantart.net/36bd/i/2015/105/f/5/punisher_fbi_card_franck_castle_by_moviecard-d80pkde.jpg";
-                            break;
-                        case Ability.ID.ShootSomeone:
-                            title = "Pistolet à poudre";
-                            description = "Vous pouvez tuer un joueur à tout moment, avec 70% de précision";
-                            url = "https://images.frankonia.fr/fsicache/server?type=image&width=720&height=720&effects=pad(CC,ffff)&quality=40&source=products/p113707_ha.jpg";
-                            break;
-                        default:
-                            title = "Erreur";
-                            description = "Compétence non reconnue, vérifier l'identifiant de cette dernière";
-                            url = "";
-                            break;
-                    }
-                    switch (ab.usageMode)
-                    {
-                        case Ability.UsageType.ForEachRoom:
-                            description2 = "Usage répété";
-                            break;
-                        case Ability.UsageType.Single:
-                            description2 = "Usage unique";
-                            break;
-                        default:
-                            description2 = "Erreur, type d'usage inconnu";
-                            break;
-                    }
-                    var footer = new EmbedFooterBuilder
-                    {
-                        Text = description2
-                    };
-                    EmbedBuilder embed = new EmbedBuilder
-                    {
-                        Title = title,
-                        Description = description,
-                        ImageUrl = url,
-                        Footer = footer
-                    };
-                    if (url == null || url == string.Empty)
-                    {
-                        embed.ImageUrl = "http://olivierdewyse.com/wp-content/uploads/2015/02/icones_ampoule.png";
-                    }
-
-
-                    var ch =  _context.Guild.GetTextChannel( u.textChannel.Id );
-                    await ch.SendMessageAsync(string.Empty, false, embed);
+                   await u.ShowAbilityInTextChannel(ab);
                 }
-               
                 //   var perm =  ch.GetPermissionOverwrite(SelectRole("@everyone"));
                 //      perm = perm.Value.Modify(null,null,null,PermValue.Deny);
                 //await ch.AddPermissionOverwriteAsync(SelectRole("@everyone"), perm.Value);
@@ -357,6 +366,7 @@ namespace BT
 
                 // Ne marche pas,tout comme ce qui est Reply Async
 
+                    
                     u.textChannel= await _context.Guild.CreateTextChannelAsync(u.user.Username);
                     await u.textChannel.SendMessageAsync(string.Empty, false, embed);
                   //   var perm =  ch.GetPermissionOverwrite(SelectRole("@everyone"));
@@ -376,6 +386,8 @@ namespace BT
 
     public class Ability
     {
+        // A mettre en protected plus tard
+        public EmbedBuilder illustration;
         public bool available = true;
         public Player _target;
         public Ability(int NameID, int usageType = UsageType.Single, Player target = null)
@@ -454,6 +466,7 @@ namespace BT
 
     public  class Goal
     {
+        public bool isReached = false;
         public const int KillEveryone = 0;
         public const int FindTalismans = 1;
         public const int ExitTemple = 11;

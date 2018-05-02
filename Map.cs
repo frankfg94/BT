@@ -16,10 +16,39 @@ namespace BT
         enum StructureType { Room,/* RiskyPassage, SafePassage, TalismanPassage,*/ ThreePassages}
         public Map (int nbSalles)
         {
-            for(int i = 0; i < nbSalles; i++)
+            for (int i = 0; i < nbSalles; i++)
             {
-                    if(i != 0)   AddStructure(StructureType.ThreePassages);
-                    AddStructure(StructureType.Room);
+                if (i != 0) AddStructure(StructureType.ThreePassages);
+                AddStructure(StructureType.Room);
+            }
+            var allPassages = allStructures.OfType<Passages>();
+            foreach (var pass in allPassages)
+            {
+                Console.WriteLine("Traitement Triple passage");
+                foreach(var passSingle in pass.passages)
+                {
+                    Console.WriteLine("Début itération  | passage Solo");
+                    if(passSingle.GetType() ==  typeof(RiskyPassage))
+                    {
+                        passSingle.allTraps.Add (new Trap(0.2,0.7,true));
+                    }
+                    else if(passSingle.GetType() == typeof(TalismanPassage))
+                    {
+                        passSingle.allTraps.Add( new Trap(0.3, 1));
+                    }
+                    else
+                    {
+                        if (!(passSingle.GetType() == typeof(SafePassage)))
+                        {
+                            Console.WriteLine(passSingle.GetType());
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Erreur de génération de carte, passage de nature inconnue");
+                            Console.ForegroundColor = ConsoleColor.Gray;
+                        }
+
+                    }
+                    Console.WriteLine("Fin itération  | passage Solo");
+                }
             }
             Console.WriteLine("// Terminé");
         }
