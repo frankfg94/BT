@@ -191,6 +191,19 @@ namespace BT
             }
            
         }
+        public async Task CheckReaction(SocketCommandContext context)
+        {
+            context.Client.ReactionAdded += Client_ReactionAdded;
+        }
+
+        private Task Client_ReactionAdded(Cacheable<IUserMessage, ulong> message, ISocketMessageChannel channel, SocketReaction reaction)
+        {
+            var AllReactions = message.Value.Reactions.ToList();
+            if(reaction.Emote.Name = "🛡" || AllReactions.Contains("❗") || AllReactions.Contains("💎") )
+            {
+
+            }
+        }
 
         public async Task ChoosePassage(SocketCommandContext context, int id, Map m)
         {
@@ -204,6 +217,9 @@ namespace BT
                 await msg.AddReactionAsync(new Emoji("💎"));
                 JDR.passageMsgs.Add(msg);
                 int time = 20000;
+
+                await CheckReaction(context);
+
                 await context.Channel.SendMessageAsync(":timer: Fermeture de la salle dans " + time / 1000 + "s");
                 await Task.Delay(time - 4000);
 
