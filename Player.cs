@@ -28,8 +28,7 @@ namespace BT
         private string _playerName { get; set; }
         public int votePower = 1;
         public bool immuneToTraps = false;
-
-
+        public int sacrificeCount = 0;
         
 
         public Player(int type, IUser u, SocketCommandContext context) 
@@ -131,47 +130,29 @@ namespace BT
             Console.WriteLine("sortie de ShowAbilityInTextChannel()");
         }
 
-        public async Task UseAbility(SocketCommandContext context, Ability ab, Player target = null)
+        public async Task UseAbility(SocketCommandContext context, Ability ab, Player target)
         {
             if (JDR.hasStarted)
             {
                 if(ab.isAvailable)
                 {
                     // On regarde si la capacité spéciale est utilisée sur le joueur même
-                    if (ab._target == null)
-                    {
+
                         switch (ab.identifier)
                         {
                             case Ability.ID.ShowFBICard:
                                 target.votePower = 2;
-                                await context.Channel.SendMessageAsync(context.Message.Author.Mention + "A sorti sa carte FBI!\nSon vote compte désormais pour double");
+                                await JDR._context.Channel.SendMessageAsync(context.Message.Author.Mention + "A sorti sa carte FBI!\nSon vote compte désormais pour double");
                                 break;
                             case Ability.ID.PrepareSurvival:
                                 target.immuneToTraps = true;
+                                await JDR._context.Channel.SendMessageAsync(context.Message.Author.Mention + "s'est immunisé au prochain piège !");
                                 break;
                             case Ability.ID.RevealTrap:
+                                break;
 
-                                break;
-                            default:
-                                Console.WriteLine("erreur d'ID d'ability fonction Use()");
-                                break;
-                        }
-                    }
-                    else
-                    {
                         // Dans le cas où l'on utilise la capacité sur un autre joueur
-                        switch (ab.identifier)
-                        {
-                            case Ability.ID.ShowFBICard:
-                                target.votePower = 2;
-                                await context.Channel.SendMessageAsync(context.Message.Author.Mention + "A sorti sa carte FBI!\nSon vote compte désormais pour double");
-                                break;
-                            case Ability.ID.PrepareSurvival:
-                                target.immuneToTraps = true;
-                                break;
-                            case Ability.ID.RevealTrap:
 
-                                break;
                             case Ability.ID.ShootSomeone:
                                 await context.Channel.SendMessageAsync(context.Message.Author.Mention + "a tué " + target.user.Username);
                                 await JDR.Kill(target);
@@ -179,7 +160,6 @@ namespace BT
                             default:
                                 Console.WriteLine("erreur d'ID d'ability fonction Use()");
                                 break;
-                        }
                     }
                     // Si l'usage est unique, on ne peut utiliser qu'une fois la compétence
                     if (ab.usageMode == UsageType.Single)
@@ -453,6 +433,7 @@ namespace BT
         public EmbedBuilder illustration;
         public bool isAvailable = true;
         public Player _target;
+        public IUserMessage askMessage;
         public Ability(int NameID, int usageType = UsageType.Single, Player target = null)
         {
             identifier = NameID;

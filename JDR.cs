@@ -108,7 +108,7 @@ namespace BT
             EmbedBuilder embedBuilder = new EmbedBuilder
             {
                 Title = "Carte : Temple Maya   ",
-                ImageUrl = "https://pre00.deviantart.net/3bb2/th/pre/i/2016/034/2/7/temple_sacrifice_by_jonathanguzi-d9qesxl.jpg",
+                ImageUrl = "https://pre00.deviantart.net/3bb2/th/pre/i/2016/034/2/7/temple__by_jonathanguzi-d9qesxl.jpg",
                 Color = Color.DarkGreen
             };
             EmbedFooterBuilder e = new EmbedFooterBuilder
@@ -165,12 +165,10 @@ namespace BT
         {
             Console.WriteLine("Entrée ShowRolesDiscordAsync()");
             var voiceUsers = GetVoiceConnectedUsers();
-            Console.WriteLine("1");
 
             List<int> ct = new List<int>(new int[] { CharacterType.CaraLoft, CharacterType.FBI_Inspector, CharacterType.MayaSucessor, CharacterType.NaziSoldier, CharacterType.SerialKiller, CharacterType.Tourist, CharacterType.Tourist });
             var ctRandomized = ct.OrderBy(a => Guid.NewGuid()).ToList();
             int ID = 0;
-            Console.WriteLine("2");
             foreach (var u in voiceUsers)
             {
                 if(!u.IsBot)
@@ -205,8 +203,18 @@ namespace BT
         }
 
 
+        [Command("debug", RunMode = RunMode.Async)]
+        public async Task Debug()
+        {
+            Player p = new Player(CharacterType.NaziSoldier, await Context.Channel.GetUserAsync(322421524319567882), Context);
+            Player p1 = new Player(CharacterType.NaziSoldier, await Context.Channel.GetUserAsync(181134438061703168), Context);
+            await ShowMap();
+            await CreateMap(5);
+            JDR.hasStarted = true;
+            await ProposeSacrifice();
+           // await (JDR.map.allStructures[0] as Room).ChoosePassage(Context, currentStructureID, map);
 
-
+        }
 
         Random r = new Random();
         [Command("startJDR", RunMode = RunMode.Async)]
@@ -283,7 +291,7 @@ namespace BT
                             await room.ChoosePassage(Context, currentStructureID, map);
                             currentRoomID++;
                         }
-                        else // Sinon c'est passage
+                        else // Sinon on prend le passage
                         {
                             await ReplyAsync("Calculs de probabilités pour le passage");
                             var pass = map.allStructures[currentStructureID];
@@ -380,14 +388,23 @@ namespace BT
                 if (p.textChannel != null)
                 {
                     EmbedBuilder eb = new EmbedBuilder();
-                    eb.Title = "Salle " + ( JDR.currentRoomID + 1 )+ " : Utiliser compétence ?";
-                    var msg = await p.textChannel.SendMessageAsync("", false, eb);
-                    await msg.AddReactionAsync(new Emoji("✔"));
+                    foreach(var ab in p.abilities)
+                    {
+                        if(ab.isAvailable)
+                        {
+                            eb.Title = "Salle " + (JDR.currentRoomID + 1) + " : Utiliser compétence ?";
+                            eb.Description = ab.illustration.Title;
+                            var msg = await p.textChannel.SendMessageAsync("", false, eb);
+                            await msg.AddReactionAsync(new Emoji("✔"));
+                            ab.askMessage = msg;
+                        }
+                    }
                 }
 
             }
         }
 
+        public static List<IUserMessage> sacrificeMSGList = new List<IUserMessage>();
         public async Task ProposeSacrifice()
         {
             Console.WriteLine("Entrée Message sacrifice ");
@@ -395,10 +412,11 @@ namespace BT
             b.Title = ("Souhaitez vous sacrifier un des aventuriers?");
             for (int i = 0; i < allPlayers.Count; i++)
                 b.Description += "\n" + allPlayers[i].user.Username + "\n";
-            Console.WriteLine("1 ");
+            
             var msg = await ReplyAsync("", false, b);
-            Console.WriteLine("2 ");
+
             Console.WriteLine("nb joueurs: " + allPlayers.Count);
+
             for (int i = 1; i < allPlayers.Count + 1; i++)
             {
                 if (i == 1)
@@ -415,14 +433,39 @@ namespace BT
                 else if (i == 6)
                     await msg.AddReactionAsync(new Emoji("🇫"));
             }
-            Console.WriteLine("Fin Message sacrifice ");
+            sacrificeMSGList.Add(msg);
+
+            await Task.Delay(5000);
+            Console.WriteLine("Fin du délai");
+
+            Player playerToSacrifice = null;
+            foreach(var p in allPlayers)
+            {
+                int record = 0;
+                if(p.sacrificeCount > record )
+                {
+                    playerToSacrifice = p;
+                }
+                p.sacrificeCount = 0;
+            }
+            try
+            {
+                await ReplyAsync(playerToSacrifice.user.Mention + " a été sacrifié car possédant le plus de votes de sacrifice !!");
+                if (playerToSacrifice != null)
+                    await Kill(playerToSacrifice);
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+            // Console.WriteLine("Pas de joueur à sacrifier");
         }
         [Command("init", RunMode = RunMode.Async)]
         public async Task InitAsync()
         {
 
             var bot = Context.User;
-            Player p = new Player(CharacterType.NaziSoldier, await Context.Channel.GetUserAsync(322421524319567882), Context);
+            Player p = new Player(CharacterType.CaraLoft, await Context.Channel.GetUserAsync(322421524319567882), Context);
             try
             {
                 foreach (var user in Context.Guild.Users)
@@ -445,7 +488,6 @@ namespace BT
             var ok =  CheckIfVoiceConnectedUsers();
             if(ok)
             {
-                    var ts = Context.Channel.EnterTypingState();
                 await CreateJDRChannels();
                 var users = Context.Guild.Users;
                 string allUsers = string.Empty;
@@ -471,13 +513,9 @@ namespace BT
                     await maintTextChannel.ModifyAsync(x => x.Name = maintTextChannel.Name + " " + allPlayers.Count +"-J");
                 await Context.Channel.SendMessageAsync("Initialisation effectuée avec succès!");
 
-                // On commence un thread séparé afin de pouvoir lancer la musique en parallèle
-                Thread t =    new Thread(async () => await StartIntroMusic());
-                t.Start();
-                await StartCountdown1MIN();
-                ts.Dispose();
-                await ShowMap();
+                //await StartCountDownAsync();
                 await CreateMap(5);
+                await ShowMap();
                 await ReplyAsync(map.GetMiniMap());
                 await StartGameAsync();
 
@@ -488,5 +526,15 @@ namespace BT
             }
         }
 
+        async Task StartCountDownAsync()
+        {
+            // On commence un thread séparé afin de pouvoir lancer la musique en parallèle
+            Thread t = new Thread(async () => await StartIntroMusic());
+            t.Start();
+            var ts = Context.Channel.EnterTypingState();
+            await StartCountdown1MIN();
+            ts.Dispose();
+        }
     }
+
 }

@@ -63,8 +63,13 @@ namespace BT
                 
                     if (random < activationProb)
                     {
-                    if (!p.immuneToTraps || r.NextDouble() < killProb)
+                    if (!p.immuneToTraps && r.NextDouble() < killProb)
                         await JDR.Kill(p);
+                    if(p.immuneToTraps)
+                    {
+                        await _context.Channel.SendMessageAsync(p.user.Username + " a utilisé sa capacité spéciale pour survivre à un piège, elle est désormais désactivée");
+                        p.immuneToTraps = false;
+                    }
                     else
                     {
                         await _context.Channel.SendMessageAsync(p.user.Username + " a activé le piège mais a survécu!");

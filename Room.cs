@@ -127,6 +127,7 @@ namespace BT
         Random r = new Random();
         public void SelectPassageWithVotes(int CurrentStructid)
         {
+            Console.WriteLine("\nS:" + voteSafe + "\nR:" + voteRisky + "\nT:" + voteTalis);
             Console.WriteLine("Structure actuelle: " + CurrentStructid + "\n");
             Console.Write("Analyse des votes...");
             if (voteSafe > voteRisky && voteSafe > voteTalis)
@@ -161,7 +162,6 @@ namespace BT
             }
 
             Console.Write("     Terminée");
-            Console.WriteLine("\nS:" + voteSafe + "\nR:"+ voteRisky + "\nT:"+ voteTalis);
         }
 
 
@@ -191,19 +191,20 @@ namespace BT
             }
            
         }
-        public async Task CheckReaction(SocketCommandContext context)
-        {
-            context.Client.ReactionAdded += Client_ReactionAdded;
-        }
+        //public async Task CheckReaction(SocketCommandContext context)
+        //{
+        //    context.Client.ReactionAdded += Client_ReactionAdded;
+        //}
 
-        private Task Client_ReactionAdded(Cacheable<IUserMessage, ulong> message, ISocketMessageChannel channel, SocketReaction reaction)
-        {
-            var AllReactions = message.Value.Reactions.ToList();
-            if(reaction.Emote.Name = "🛡" || AllReactions.Contains("❗") || AllReactions.Contains("💎") )
-            {
+        //private void Client_ReactionAdded(Cacheable<IUserMessage, ulong> message, ISocketMessageChannel channel, SocketReaction reaction)
+        //{
+        ////    var AllReactions = message.Value.Reactions.ToList();
+        ////    if(reaction.Emote.Name = "🛡" || AllReactions.Contains("❗") || AllReactions.Contains("💎") )
+        ////    {
 
-            }
-        }
+        ////    }
+        //}
+
 
         public async Task ChoosePassage(SocketCommandContext context, int id, Map m)
         {
@@ -218,33 +219,33 @@ namespace BT
                 JDR.passageMsgs.Add(msg);
                 int time = 20000;
 
-                await CheckReaction(context);
+                //await CheckReaction(context);
 
                 await context.Channel.SendMessageAsync(":timer: Fermeture de la salle dans " + time / 1000 + "s");
                 await Task.Delay(time - 4000);
 
                 // id + 1 car on regarde les passages à venir
                 SelectPassageWithVotes(id+1);
-                var pass = (m.allStructures[id+1] as Passages);
-                foreach (var passage in pass.passages)  
+                var pass = (m.allStructures[id + 1] as Passages);
+                foreach (var passage in pass.passages)
+                {
+                    if (passage.isSelected)
                     {
-                       if(passage.isSelected)
-                       {
-                        if(passage.isSelectedRandomly)
+                        if (passage.isSelectedRandomly)
                         {
                             await context.Channel.SendMessageAsync("Comme les aventuriers n'ont pas pu se départager, un des passages est choisi aléatoirement");
                         }
                         await context.Channel.SendMessageAsync("Passage sélectionné !  : " + passage.GetName());
-                        if(passage.GetName() == "passage Talisman")
-                            if(JDR.map.allStructures[id + 2] != null)
-                            (JDR.map.allStructures[id + 2] as Room).illustration.Title = ":gem: Salle au Talisman";
+                        if (passage.GetName() == "passage Talisman")
+                            if (JDR.map.allStructures[id + 2] != null)
+                                (JDR.map.allStructures[id + 2] as Room).illustration.Title = ":gem: Salle au Talisman";
                         if (JDR.map.allStructures[id + 1] != null)
                             JDR.map.allStructures[id + 1] = passage;
-                       }
+                    }
 
                 }
-                 am = new AudioModule((AudioService)Program._services.GetService(typeof(AudioService)), context);
-                try { await am.DoorCloseSFX(); }
+
+                try { am = new AudioModule((AudioService)Program._services.GetService(typeof(AudioService)), context); ; await am.DoorCloseSFX(); }
                 catch (Exception ex) { Console.WriteLine(ex); }
                 await context.Client.StopAsync();
                 await context.Channel.SendMessageAsync("En route vers le passage !");

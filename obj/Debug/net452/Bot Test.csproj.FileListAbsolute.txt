@@ -52,4 +52,4 @@ C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\BT\bin\Debug\ne
 C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\BT\bin\Debug\net452\PostSharp.Patterns.Common.dll
 C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\BT\bin\Debug\net452\PostSharp.Patterns.Model.dll
 C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\BT\bin\Debug\net452\PostSharp.Patterns.Diagnostics.dll
-C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\BT\obj\Debug\net452\Bot Test.csprojResolveAssemblyReference.cache
+C:\Users\gillioen\Documents\Visual Studio 2017\Projects\Bot Test\BT\obj\Debug\net452\Bot Test.csprojAssemblyReference.cache

@@ -499,34 +499,95 @@ namespace BT
                     }
                 }
             }
-            else if (!socketReaction.User.Value.IsBot && JDR.passageMsgs.Last().Id == msg.Id) /*&& !voter.Contains(socketReaction.User.Value)*/
+
+            if (!socketReaction.User.Value.IsBot) /*&& !voter.Contains(socketReaction.User.Value)*/
             {
-                if(JDR.hasStarted)
+                Console.WriteLine("Réaction non bot détectée");
+                if(JDR.hasStarted )
                 {
-                    Console.WriteLine("Message de passage JDR");
-                    //voter.Add(msg.Value.Author);
-                    var structActuelle = (JDR.map.allStructures[JDR.currentStructureID] as Room);
-                    Console.WriteLine("Choix du passage :   ");
-                    if (socketReaction.Emote.Name == "🛡")
+                    foreach(var p in JDR.allPlayers)
                     {
-                        Console.Write("Safe");
-                        structActuelle.VotePassage(PassageType.Safe);
-                    }
-                    else if (socketReaction.Emote.Name == "❗")
-                    {
-                        Console.Write("Risqué");
-                        structActuelle.VotePassage(PassageType.Risky);
-                    }
-                    else if (socketReaction.Emote.Name == "💎")
-                    {
-                        Console.Write("Talisman");
-                        structActuelle.VotePassage(PassageType.Talisman);
+                        foreach (var ab in p.abilities)
+                        {
+                            if (msg.Id == ab.askMessage.Id)
+                            {
+                                Console.BackgroundColor = ConsoleColor.Blue;
+                                Console.WriteLine("Cliqué sur un message de capacité " + p.user.Username + " utilise la compétence : " + ab.illustration.Title);
+                                Console.BackgroundColor = ConsoleColor.Black;
+                                await p.UseAbility(Context,ab,p);
+                            }
+                        }
                     }
                 }
+                if (JDR.sacrificeMSGList.Last().Id == msg.Id)
+                {
+                    Console.WriteLine("Détection sacrifice");
+                    if (JDR.hasStarted)
+                    {
+                        Console.BackgroundColor = ConsoleColor.Red;
+                        if (socketReaction.Emote.Name == "🇦")
+                        {
+                            JDR.allPlayers[0].sacrificeCount++;
+                        }
+                        else if (socketReaction.Emote.Name == "🇧")
+                        {
+                            JDR.allPlayers[1].sacrificeCount++;
+                        }
+                        else if (socketReaction.Emote.Name == "🇨")
+                        {
+                            JDR.allPlayers[2].sacrificeCount++;
+                        }
+                        else if (socketReaction.Emote.Name == "🇩")
+                        {
+                            JDR.allPlayers[3].sacrificeCount++;
+                        }
+                        else if (socketReaction.Emote.Name == "🇪")
+                        {
+                            JDR.allPlayers[4].sacrificeCount++;
+                        }
+                        else if (socketReaction.Emote.Name == "🇫")
+                        {
+                            JDR.allPlayers[5].sacrificeCount++;
+                        }
+                    }
+                  
+                }
+                if (JDR.passageMsgs.Last().Id == msg.Id)
+                {
+
+                    if (JDR.hasStarted)
+                    {
+                        Console.WriteLine("Message de passage JDR");
+                        //voter.Add(msg.Value.Author);
+                        var structActuelle = (JDR.map.allStructures[JDR.currentStructureID] as Room);
+                        Console.WriteLine("Choix du passage :   ");
+                        if (socketReaction.Emote.Name == "🛡")
+                        {
+                            Console.Write("Safe");
+                            structActuelle.VotePassage(PassageType.Safe);
+                        }
+                        else if (socketReaction.Emote.Name == "❗")
+                        {
+                            Console.Write("Risqué");
+                            structActuelle.VotePassage(PassageType.Risky);
+                        }
+                        else if (socketReaction.Emote.Name == "💎")
+                        {
+                            Console.Write("Talisman");
+                            structActuelle.VotePassage(PassageType.Talisman);
+                        }
+                    }
+                    else
+                    {
+                        await Console.Out.WriteLineAsync("Le JDR n'a pas été commencé " + msg.Id);
+                    }
+                }
+
                 else
                 {
-                    await Console.Out.WriteLineAsync("Le JDR n'a pas été commencé " + msg.Id);
+                    Console.WriteLine(JDR.sacrificeMSGList[0].Id + " | " + msg.Id);
                 }
+
             }
             else
             {
