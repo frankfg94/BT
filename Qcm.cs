@@ -3,7 +3,9 @@ using Discord.Commands;
 using Discord.WebSocket;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace BT
@@ -45,7 +47,7 @@ namespace BT
             public object content;
             public string name = "Sans nom";
             public string answer = "🇦";
-            public string answerLetter = "🇦";
+            public string answerLetter =    "🇦";
             public bool answered = false;
             public ImageQuestion imageQuestion;
             public Question(object _answer, int _type = QType.text, object _content = null, string Qname = "Sans nom", ImageQuestion imageQuestion = ImageQuestion.None)
@@ -135,6 +137,13 @@ namespace BT
                     qToAdd.content = GeneratePictureContent(qToAdd, ImageQuestion.CorrespondingImageMultiple);
                 }
             }
+            else if(type == QType.audio)
+            {
+                Console.WriteLine("Gen");
+                qToAdd = new Question(null, type, "Question audio");
+                qToAdd.content = GenerateAudioContent(qToAdd);
+                Console.WriteLine("Gen à priori ok");
+            }
             else
             {
                 qToAdd = new Question(null, type, "Autre");
@@ -150,6 +159,145 @@ namespace BT
                 questions.Insert(pos, qToAdd);
             }
             return qToAdd;
+        }
+
+        private object GenerateAudioContent(Question qToAdd)
+        {
+            List<FileInfo> audioFiles = new List<FileInfo>();
+            try
+            {
+                // Dossier où sont placées les musiques
+                DirectoryInfo dinfo = new DirectoryInfo("./BlindTest");
+
+                // On peut obtenir des sons pour le moment dans ces deux formats
+                FileInfo[] Files = dinfo.GetFiles("*.mp3");
+                FileInfo[] Files2 = dinfo.GetFiles("*.wav");
+
+                foreach (FileInfo f in Files)
+                {
+                    audioFiles.Add(f);
+                    Console.WriteLine(f.Name);
+                }
+                foreach (FileInfo f in Files2)
+                {
+                    audioFiles.Add(f);
+                    Console.WriteLine(f.Name);
+                }
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+
+
+            var file = audioFiles[r.Next(audioFiles.Count)];
+
+            string a, b, c, d ;
+            a = b = c = d = null;
+            string correctAnswer = "Erreur, pas de réponse fournie";
+
+            // Génération des reponses
+            switch (file.Name)
+            {
+                // Exemples de sons pour blindtest
+                case "Zombie.mp3":
+                    a = "Macklemore";
+                    b = "Zombie";
+                    c = "Marroon 5";
+                    d = "Ed Sheeran";
+                    correctAnswer = b;
+                    break;
+
+                case "Mackle.mp3" :
+                    a = "Macklemore";
+                    b = "B.o.B";
+                    c = "Vic Mensa";
+                    d = "Logic";
+                    correctAnswer = a;
+                    break;
+                case "cWinston.mp3":
+                    a = "Charlie Winston";
+                    b = "Yodelice";
+                    c = "Ben Harper";
+                    d = "Jehro";
+                    correctAnswer = a;
+                    break;
+
+                case "Trophée.mp3":
+                    a = "Vald";
+                    b = "Niska";
+                    c = "Fianso";
+                    d = "Hugo TSR";
+                    correctAnswer = a;
+                    break;
+
+                case "Motel.mp3":
+                    a = "Maitre Gims";
+                    b = "S.Pri Noir";
+                    c = "Lefa";
+                    d = "Niska";
+                    correctAnswer = c;
+                    break;
+
+                case "Hugo_Tsr.mp3":
+                    a = "Hugo TSR";
+                    b = "Maska";
+                    c = "MHD";
+                    d = "Nekfeu";
+                    correctAnswer = a;
+                    break;
+
+                default:
+                    // Si jamais il y'a une erreur dans le nom, ce message s'affiche pour la signaler au développeur
+                    Console.WriteLine("Réponses du fichier audio : " + file.Name + " non configurées");
+                    break;
+            }
+
+            List<string> initAnswers = new List<string>();
+            initAnswers.Add(a);
+            initAnswers.Add(b);
+            initAnswers.Add(c);
+            initAnswers.Add(d);
+
+
+
+            // On enregistre la bonne réponse de type texte
+            qToAdd.answer = correctAnswer;
+
+
+            // Mélange des réponses dans une nouvelle liste
+            var randomAnswers = initAnswers.OrderBy(elem => Guid.NewGuid()).ToList();
+
+            // On enregistre la bonne icone de réponse
+            if (randomAnswers[0] == correctAnswer)
+            {
+                qToAdd.answerLetter = ":regional_indicator_a:";
+            }
+            else if (randomAnswers[1] == correctAnswer)
+            {
+                qToAdd.answerLetter = ":regional_indicator_b:";
+            }
+            else if (randomAnswers[2] == correctAnswer)
+            {
+                qToAdd.answerLetter = ":regional_indicator_c:";
+            }
+            else if (randomAnswers[3] == correctAnswer)
+            {
+                qToAdd.answerLetter = ":regional_indicator_d:";
+            }
+
+            EmbedBuilder eb = new EmbedBuilder();
+            eb.Title = "Qui est l'auteur de cette musique ?";
+            eb.WithDescription("a) " + randomAnswers[0] + "\nb) " + randomAnswers[1] + "\nc) " + randomAnswers[2] + "\nd) " + randomAnswers[3]);
+
+            object[] data = new object[2];
+
+            // On retourne l'embed
+            data[0] =  eb ;
+            // On retourne le nom du fichier
+            data[1] = file.Name;
+            
+            return data;
         }
 
         List<EmbedBuilder> ebListSimple = new List<EmbedBuilder>();
@@ -652,7 +800,9 @@ namespace BT
                 QCM,
                 JDR_Passage
             }
-        public async Task<IMessage> DisplayInDiscord(ISocketMessageChannel channel, Question question, DisplayMode display  = DisplayMode.QCM)
+
+        AudioModule audioModule;
+        public async Task<IMessage> DisplayInDiscord(ISocketMessageChannel channel, Question question, DisplayMode display  = DisplayMode.QCM, AudioModule am = null)
         {
 
             Console.WriteLine("Fonction d'affichage lancée ( Nom : DisplayInDiscord ) ");
@@ -703,6 +853,28 @@ namespace BT
                         await AddQcmReactions(msg);
                     }
                 }
+                else if (question.type == QType.audio)
+                {
+                    Console.WriteLine(">>>Question Audio");
+                    EmbedBuilder eb = ((question.content as object[])[0] as EmbedBuilder);
+                    msg = await channel.SendMessageAsync("DisplayInDiscord()", false, eb);
+                    try
+                    {
+                        // Permet d'empêcher l'audio module d'être recrée, ce qui entraînerait une exception
+                        if (audioModule == null)
+                            audioModule = am;
+                        Thread t = new Thread(async () => await audioModule.PlayMusic("./BlindTest/" + ((question.content as object[])[1] as string)));
+                        t.Start();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex);
+                    }
+                    await AddQcmReactions(msg);
+
+                    
+                    Console.WriteLine(">>>Succès");
+                }
                 else
                 {
                     await Console.Out.WriteLineAsync("Pas de type texte ou image");
@@ -711,6 +883,7 @@ namespace BT
                 }
                 return msg;
             }
+
             else
             {
                 Console.WriteLine("A faire");
@@ -828,7 +1001,7 @@ namespace BT
                 }
                 else
                 {
-                    e.AddField("Type non généré : ", q.type );
+                    e.AddField("Type non géré par le système de prévisualisation: ", q.type );
                 }
                 id++;
             }

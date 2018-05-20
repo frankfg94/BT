@@ -43,7 +43,7 @@ namespace BT
             List<IUser> usersConnect = new List<IUser>();
             foreach (var u in users)
             {
-                // Plus tard rajouter seulement si le channel audio 
+                // Plus tard rajouter seulement si le channel audio  
                 if (u.VoiceChannel != null)
                     usersConnect.Add(u);
             }
@@ -125,7 +125,7 @@ namespace BT
             try
             {
                 AudioModule am = new AudioModule((AudioService)Program._services.GetService(typeof(AudioService)), Context);
-                await am.Music2();
+                await am.Music3();  
             }
             catch (Exception ex)
             {
@@ -191,6 +191,8 @@ namespace BT
             maintTextChannel = await Context.Guild.CreateTextChannelAsync("Lobby");
             mainVoiceChannel = await Context.Guild.CreateVoiceChannelAsync("Joueurs en attente");
         }
+
+       
 
         public static async Task Kill(Player p)
         {
@@ -488,7 +490,9 @@ namespace BT
             var ok =  CheckIfVoiceConnectedUsers();
             if(ok)
             {
+                Console.WriteLine(1);
                 await CreateJDRChannels();
+                Console.WriteLine(2);
                 var users = Context.Guild.Users;
                 string allUsers = string.Empty;
                 foreach (var u in users)

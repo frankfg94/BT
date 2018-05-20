@@ -269,6 +269,8 @@ namespace BT
             }
         }
 
+
+
         [Command("deleteQCM", RunMode = RunMode.Async)]
         public async Task DeleteQCM([Remainder] string QCMname)
         {
@@ -345,6 +347,32 @@ namespace BT
             catch { await ReplyAsync("Erreur lors de la création du QCM"); }
             //await Context.Guild.CreateTextChannelAsync(bigQcm.name);
             //await bigQcm.Preview(channel);
+        }
+
+        [Command("blindtest", RunMode = RunMode.Async)]
+        public async Task BlindTest(string name = "blindtest")
+        {
+            try
+            {
+                ISocketMessageChannel channel = Context.Channel;
+            await ReplyAsync("Génération du BlindTests! :fire: ");
+            Qcm bigQcm = new Qcm();
+            qcmList.Add(bigQcm);
+            bigQcm.name = name;
+            bigQcm.AddQuestion(QType.audio);
+            bigQcm.AddQuestion(QType.audio);
+            bigQcm.AddQuestion(QType.audio);
+            bigQcm.AddQuestion(QType.audio);
+            bigQcm.AddQuestion(QType.audio);
+            bigQcm.AddQuestion(QType.audio);
+            bigQcm.AddQuestion(QType.audio);
+
+                await ReplyAsync("Questions ajoutées avec succès");
+            }
+            catch { await ReplyAsync("Erreur lors de la création du QCM"); }
+            //await Context.Guild.CreateTextChannelAsync(bigQcm.name);
+            //await bigQcm.Preview(channel);
+           await StartQCM(name);
         }
 
         [Command("qcmM", RunMode = RunMode.Async)]
@@ -483,6 +511,7 @@ namespace BT
                                 Console.Write("True\n");
                                 Console.ForegroundColor = ConsoleColor.White;
                                 await Console.Out.WriteLineAsync("On passe à Q" + i);
+                                await StopAudioCmd();
                                 await StartQCM(qcm.name);
                                 i++;
                             }
@@ -500,7 +529,7 @@ namespace BT
                 }
             }
 
-            if (!socketReaction.User.Value.IsBot) /*&& !voter.Contains(socketReaction.User.Value)*/
+            else if (!socketReaction.User.Value.IsBot) /*&& !voter.Contains(socketReaction.User.Value)*/
             {
                 Console.WriteLine("Réaction non bot détectée");
                 if(JDR.hasStarted )
@@ -658,10 +687,17 @@ namespace BT
         [Command("stop", RunMode = RunMode.Async)]
         public async Task StopAudioCmd()
         {
-            foreach (var process in Process.GetProcessesByName("ffmpeg"))
+            // await _client.StopAsync();
+            if (Process.GetProcessesByName("ffmpeg") != null)
             {
-                process.Kill();
+                foreach (var process in Process.GetProcessesByName("ffmpeg"))
+                {
+                    process.Kill();
+                }
+
             }
+            //await _client.StopAsync();
+            //await _client.StartAsync();
             //AudioService audioService = (AudioService)Program._services.GetService(typeof(AudioService));
             //AudioModule am = new AudioModule(audioService, Context);
             //am.StopCmd();
@@ -674,18 +710,23 @@ namespace BT
         //    Room a = new Room();
         //    await a.ChoosePassage(Context);
         //}
-
+        AudioModule am;
         static int i = 1;
         [Command("start", RunMode = RunMode.Async)]
         public async Task StartQCM([Remainder] string qcmName)
         {
+            Console.WriteLine();
             Qcm qcm = await GetQcm(qcmName);
+            AudioService audioService = (AudioService)Program._services.GetService(typeof(AudioService));
+            if(am == null)
+                 am = new AudioModule(audioService, Context);
             IMessage msg = null;
             if (!qcm.HasStarted)
             {
                 qcm.HasStarted = true;
                 Console.WriteLine("Affichage Q1" );
-                msg = await qcm.DisplayInDiscord(_client.GetChannel(414746672284041222) as ISocketMessageChannel, qcm.questions[0]);
+                // Si ça buggue ç'est à cause du display Mode
+                msg = await qcm.DisplayInDiscord(_client.GetChannel(414746672284041222) as ISocketMessageChannel, qcm.questions[0],Qcm.DisplayMode.QCM, am);
                 qcm.questionsID.Add(msg.Id);
             }
             else //Problème réussir à bloquer l'affichage Q2 cad ignorer le dernier smiley
@@ -694,7 +735,7 @@ namespace BT
                 if (i < qcm.questions.Count)
                 {
                     Console.WriteLine("On arrive à une question de type :" + qcm.questions[i].type);
-                    msg = await qcm.DisplayInDiscord(_client.GetChannel(414746672284041222) as ISocketMessageChannel, qcm.questions[i]);
+                    msg = await qcm.DisplayInDiscord(_client.GetChannel(414746672284041222) as ISocketMessageChannel, qcm.questions[i], Qcm.DisplayMode.QCM);
                     qcm.questionsID.Add(msg.Id);
                 }
                 // Tableau des réponses

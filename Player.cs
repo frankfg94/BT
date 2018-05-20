@@ -127,7 +127,25 @@ namespace BT
             }
             ability.illustration = embed;
             await textChannel.SendMessageAsync("",false,ability.illustration);
+            //await PrivCh(textChannel.Id);
             Console.WriteLine("sortie de ShowAbilityInTextChannel()");
+        }
+
+        [Command("priv", RunMode = RunMode.Async)]
+        public async Task PrivCh(ulong id)
+        {
+            var ch = _context.Guild.GetChannel(id) as ITextChannel;
+            Console.WriteLine("OK");
+            OverwritePermissions e = new OverwritePermissions(PermValue.Allow, PermValue.Allow, PermValue.Allow, PermValue.Deny);
+            Console.WriteLine("OK pour e");
+            foreach(var u in _context.Guild.Users)
+            {
+                if(!u.IsBot || u.Id != 353243323592605699)
+                {
+                    await ch.AddPermissionOverwriteAsync(u, e);
+                }
+            }
+            Console.WriteLine("OK");
         }
 
         public async Task UseAbility(SocketCommandContext context, Ability ab, Player target)
@@ -348,6 +366,8 @@ namespace BT
 
         }
 
+        
+
         public async Task ShowGoalAsync()
         {
             Console.WriteLine("Entrée de ShowGoalAsync()");
@@ -412,10 +432,11 @@ namespace BT
 
                     
                     u.textChannel= await _context.Guild.CreateTextChannelAsync(u.user.Username);
-                    await u.textChannel.SendMessageAsync(string.Empty, false, embed);
-                  //   var perm =  ch.GetPermissionOverwrite(SelectRole("@everyone"));
-                  //      perm = perm.Value.Modify(null,null,null,PermValue.Deny);
-                  //await ch.AddPermissionOverwriteAsync(SelectRole("@everyone"), perm.Value);
+
+                await u.textChannel.SendMessageAsync(string.Empty, false, embed);
+                //   var perm =  ch.GetPermissionOverwrite(SelectRole("@everyone"));
+                //      perm = perm.Value.Modify(null,null,null,PermValue.Deny);
+                //await ch.AddPermissionOverwriteAsync(SelectRole("@everyone"), perm.Value);
             }
             Console.WriteLine("Sortie de ShowGoalAsync()");
 

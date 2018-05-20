@@ -72,11 +72,34 @@ public class AudioModule : ModuleBase<ICommandContext>
         await PlayCmd(song: @"D:/Téléchargements/koh.mp3");
     }
 
-    [Command("music2", RunMode = RunMode.Async)]
-    public async Task Music2()
+    public async Task PlayMusic(string path)
     {
+        try
+        {
+            //await ReplyAsync("Lancement fonction");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+        }
         await JoinCmd();
-        await PlayCmd(song: "r6.mp3");
+        await PlayCmd(song: @path);
+    }
+
+    [Command("music3", RunMode = RunMode.Async)]
+    public async Task Music3()
+    {
+        Console.WriteLine("Entrée fonction");
+        try
+        {
+            await JoinCmd();
+            await PlayCmd(song: "r6.mp3");
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine(ex);
+        }
+        Console.WriteLine("Sortie fonction");
     }
 
     [Command("doorCloseSFX", RunMode = RunMode.Async)]
