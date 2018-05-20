@@ -3,7 +3,7 @@
   <Evolution Source="#1=F:[Bot Test]BT.Player::_context" Target="#2=F:[Bot Test]BT.Player::&lt;_context&gt;k__OriginalField" />
   <Evolution Source="#2" Target="#3=P:[Bot Test]BT.Player::_context()" />
   <Class Class="#4=T:[PostSharp.Patterns.Common]PostSharp.Patterns.Contracts.RequiredAttribute">
-    <Instance Declaration="#2" Id="7fefc65734887517">
+    <Instance Declaration="#2" Id="7fefc65780095131">
       <Target>
         <JoinPoint Advising="#4" Description="#5=Validates the assigned value" Semantic="Setter" Ordinal="0" LinesAvoided="4" />
       </Target>

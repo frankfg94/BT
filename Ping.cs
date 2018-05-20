@@ -529,7 +529,7 @@ namespace BT
                 }
             }
 
-            else if (!socketReaction.User.Value.IsBot) /*&& !voter.Contains(socketReaction.User.Value)*/
+                 if (!socketReaction.User.Value.IsBot) /*&& !voter.Contains(socketReaction.User.Value)*/
             {
                 Console.WriteLine("Réaction non bot détectée");
                 if(JDR.hasStarted )

@@ -287,7 +287,7 @@ namespace BT
                             // L'esprit Maya demande si on sacrifie un joueur
                             await ProposeSacrifice();
 
-                           // Thread.Sleep(10000);
+                           Thread.Sleep(10000);
 
                             // On choisit le passage
                             await room.ChoosePassage(Context, currentStructureID, map);
