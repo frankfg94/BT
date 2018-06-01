@@ -16,25 +16,16 @@ namespace BT
     public class Program
     {
 
-
-    [STAThread] // semble ne rien faire
+    //[STAThread] // semble ne rien faire
         static void Main(string[] args)
         {
             Console.WriteLine("Starting ...\n");
             new Program().RunBotAsync().GetAwaiter().GetResult();
         }
 
-        private DiscordSocketClient _client;
-        private CommandService _commands;
-        static public IServiceProvider _services;
-
-        string[] lines = File.ReadAllLines("token.txt");
-        private string botToken;
-
-        public static AudioService audioService = new AudioService();
         public async Task RunBotAsync()
         {
-            //_services = new ServiceCollection().AddSingleton(new AudioService());
+
             _client = new DiscordSocketClient();
             _commands = new CommandService();            _services = new ServiceCollection()
                 .AddSingleton(_client)
@@ -42,13 +33,11 @@ namespace BT
                 .AddSingleton(new AudioService())
                 .BuildServiceProvider();
             _client.Log += Log;
-            await RegistercommandAsync();
-            
-            _client.UserJoined += AnnounceJoinedUser; //Check if userjoined
+            await RegistercommandAsync();   
+            _client.UserJoined += AnnounceJoinedUser; 
             _client.ReactionRemoved += ReactionRemoved;
             Ping p = new Ping(_client);
             _client.ReactionAdded += p.ReactionParse;
-
             botToken = lines[0];
             await _client.LoginAsync(TokenType.Bot, botToken);
 
@@ -58,7 +47,16 @@ namespace BT
             // event subscription  
         }
 
-       
+
+        private DiscordSocketClient _client;
+        private CommandService _commands;
+        static public IServiceProvider _services;
+
+        string[] lines = File.ReadAllLines("token.txt");
+        private string botToken;
+
+        public static AudioService audioService = new AudioService();
+
         public async Task VoiceUpdate(SocketUser user, SocketVoiceState state, SocketVoiceState state2) //welcomes New Players
         {
             var channel = _client.GetChannel(370666551306616845) as SocketTextChannel; //gets channel to send message in
@@ -109,6 +107,7 @@ namespace BT
         {
             _client.MessageReceived += HandleCommandAsync;
             await _commands.AddModulesAsync(Assembly.GetEntryAssembly());
+
         }
 
         /// <summary>

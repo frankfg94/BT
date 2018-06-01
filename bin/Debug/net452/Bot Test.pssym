@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Symbols LinesOfCode="369" PostSharpLinesOfCode="0" EnhancedTypesCount="1" SchemaVersion="1" PostSharpVersion="5.0.50.0" xmlns="http://schemas.postsharp.org/2.0/symbols">
+<Symbols LinesOfCode="375" PostSharpLinesOfCode="0" EnhancedTypesCount="1" SchemaVersion="1" PostSharpVersion="5.0.50.0" xmlns="http://schemas.postsharp.org/2.0/symbols">
   <Evolution Source="#1=F:[Bot Test]BT.Player::_context" Target="#2=F:[Bot Test]BT.Player::&lt;_context&gt;k__OriginalField" />
   <Evolution Source="#2" Target="#3=P:[Bot Test]BT.Player::_context()" />
   <Class Class="#4=T:[PostSharp.Patterns.Common]PostSharp.Patterns.Contracts.RequiredAttribute">
-    <Instance Declaration="#2" Id="7fefc65780095131">
+    <Instance Declaration="#2" Id="7fefc6579b8546d6">
       <Target>
         <JoinPoint Advising="#4" Description="#5=Validates the assigned value" Semantic="Setter" Ordinal="0" LinesAvoided="4" />
       </Target>

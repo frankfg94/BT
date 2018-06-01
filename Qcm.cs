@@ -20,7 +20,7 @@ namespace BT
 
     public enum ImageQuestion
     {
-        CorrespondingImageMultiple = 0,
+        CorrespondingImageMultiple = 0, 
         RecognizePictureSingle = 1,
         None = -1,
     };
@@ -222,8 +222,7 @@ namespace BT
                     d = "Jehro";
                     correctAnswer = a;
                     break;
-
-                case "Trophée.mp3":
+                case "Trophee.mp3":
                     a = "Vald";
                     b = "Niska";
                     c = "Fianso";
@@ -271,19 +270,19 @@ namespace BT
             // On enregistre la bonne icone de réponse
             if (randomAnswers[0] == correctAnswer)
             {
-                qToAdd.answerLetter = ":regional_indicator_a:";
+                qToAdd.answerLetter = "🇦";
             }
             else if (randomAnswers[1] == correctAnswer)
             {
-                qToAdd.answerLetter = ":regional_indicator_b:";
+                qToAdd.answerLetter = "🇧";
             }
             else if (randomAnswers[2] == correctAnswer)
             {
-                qToAdd.answerLetter = ":regional_indicator_c:";
+                qToAdd.answerLetter = "🇨";
             }
             else if (randomAnswers[3] == correctAnswer)
             {
-                qToAdd.answerLetter = ":regional_indicator_d:";
+                qToAdd.answerLetter = "🇩";
             }
 
             EmbedBuilder eb = new EmbedBuilder();
@@ -430,19 +429,19 @@ namespace BT
                 // On enregistre la bonne icone de réponse
                 if (randomAnswers[0] == answer)
                 {
-                    q.answerLetter = ":regional_indicator_a:";
+                    q.answerLetter = "🇦";
                 }
                 else if (randomAnswers[1] == answer)
                 {
-                    q.answerLetter = ":regional_indicator_b:";
+                    q.answerLetter = "🇧";
                 }
                 else if (randomAnswers[2] == answer)
                 {
-                    q.answerLetter = ":regional_indicator_c:";
+                    q.answerLetter = "🇨";
                 }
                 else if (randomAnswers[3] == answer)
                 {
-                    q.answerLetter = ":regional_indicator_d:";
+                    q.answerLetter = "🇩";
                 }
 
                 // Ajout du titre à l'embed
@@ -486,6 +485,7 @@ namespace BT
                         ebListMultiple.Add(imgEb4.WithImageUrl(url4).WithTitle("Réponse :regional_indicator_d:"));
                         q.name = "Lequel de ces tableaux n'a pas été peint par Vermeer?"; // Ce qui est affiché trop de fois d'affilée
                         q.answer = "Vermeer";
+                        q.answerLetter = "🇨";
                         break;
                     default:
                         url1 = "https://blog.sqlauthority.com/i/a/errorstop.png";
@@ -534,7 +534,7 @@ namespace BT
             return eb;
         }
 
-        private List<Object> ImportDataForDefaultContent(int id)
+        private List<Object> ImportDataForDefaultContent(int id, Question q)
         {
             List<Object> data = new List<object>();
             Console.WriteLine("Importation du contenu :" + id + " pour default text content");
@@ -656,11 +656,11 @@ namespace BT
                 case 10:
                     {
                         question = "Quelle est cette région ?";
-                        imageUrl = "https://www.nouvelordremondial.cc/wp-content/uploads/2017/11/18-25-elite.jpghttps://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Lorraine_region_locator_map.svg/1200px-Lorraine_region_locator_map.svg.png";
+                        imageUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Carte_Lorraine_2018.png/280px-Carte_Lorraine_2018.png";
                         a = "Aquitaine";
                         b = "Alsace";
                         c = "Lorraine";
-                        d = "Vendée";
+                        d = "Nord-Pas-De-Calais";
                         correctTextAnswer = c;
                         break;
                     }
@@ -686,6 +686,7 @@ namespace BT
                         correctTextAnswer = c;
                         break;
                     }
+
                 default:
                     {
                         question = "Index incorrect";
@@ -699,7 +700,26 @@ namespace BT
             possibleTextAnswers[1] = b;
             possibleTextAnswers[2] = c;
             possibleTextAnswers[3] = d;
-            data.Add(possibleTextAnswers);
+            var randAns = possibleTextAnswers.ToList().OrderBy(ans => Guid.NewGuid()).ToList();
+            
+            if (randAns[0] == correctTextAnswer)
+            {
+                q.answerLetter = "🇦";
+            }
+            else if (randAns[1] == correctTextAnswer)
+            {
+                q.answerLetter = "🇧";
+            }
+            else if (randAns[2] == correctTextAnswer)
+            {
+                q.answerLetter = "🇨";
+            }
+            else if (randAns[3] == correctTextAnswer)
+            {
+                q.answerLetter = "🇩";
+            }
+            q.answer = correctTextAnswer;
+            data.Add(randAns.ToArray());
             data.Add(question);
             data.Add(imageUrl);
             data.Add(correctTextAnswer);
@@ -721,7 +741,7 @@ namespace BT
         public EmbedBuilder GenerateDefaultContent(Question q, int id)
         {
             // Importation des données, et conversion dans le format de Discord
-            var data = ImportDataForDefaultContent(id);
+            var data = ImportDataForDefaultContent(id,q);
             return ConvertToEmbed(data);
         }
 
@@ -769,19 +789,19 @@ namespace BT
             eb.AddField("d) ", listMel[3]);
             if (listMel[0] == result)
             {
-                q.answerLetter = ":regional_indicator_a:";
+                q.answerLetter = "🇦";
             }
             else if (listMel[1] == result)
             {
-                q.answerLetter = ":regional_indicator_b:";
+                q.answerLetter = "🇧";
             }
             else if (listMel[2] == result)
             {
-                q.answerLetter = ":regional_indicator_c:";
+                q.answerLetter = "🇨";
             }
             else if (listMel[3] == result)
             {
-                q.answerLetter = ":regional_indicator_d:";
+                q.answerLetter = "🇩";
             }
             Console.WriteLine("Reach4");
 
@@ -813,7 +833,7 @@ namespace BT
                 if (question.type == QType.text)
                 {
                     EmbedBuilder eb = (EmbedBuilder)question.content;
-                    msg = await channel.SendMessageAsync("DisplayInDiscord()", false, eb);
+                    msg = await channel.SendMessageAsync("", false, eb);
                     await AddQcmReactions(msg);
                 }
                 else if (question.type == QType.image)

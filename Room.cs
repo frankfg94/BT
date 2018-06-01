@@ -53,9 +53,6 @@ namespace BT
         }
         private int selected = -1;
 
-       
-
-
     }
 
         
@@ -205,23 +202,23 @@ namespace BT
         ////    }
         //}
 
-
-        public async Task ChoosePassage(SocketCommandContext context, int id, Map m)
+        public async Task ChoosePassage(SocketCommandContext context, int id, Map m, AudioModule audio)
         {
+            int time = 20000;
+            await context.Channel.SendMessageAsync(":timer: Fermeture de la salle dans " + time / 1000 + "s");
             var msg = await (m.allStructures[id] as Room).ShowIllustrationPassage(context);
             Console.WriteLine("Choix du passage");
+
             if(msg != null)
             {
+                JDR.passageMsgsID.Add(msg.Id);
                 //var msg = await p.StartQCM(passageQCM.name);
                 await msg.AddReactionAsync(new Emoji("🛡"));
                 await msg.AddReactionAsync(new Emoji("❗"));
                 await msg.AddReactionAsync(new Emoji("💎"));
-                JDR.passageMsgs.Add(msg);
-                int time = 20000;
 
                 //await CheckReaction(context);
 
-                await context.Channel.SendMessageAsync(":timer: Fermeture de la salle dans " + time / 1000 + "s");
                 await Task.Delay(time - 4000);
 
                 // id + 1 car on regarde les passages à venir
@@ -241,13 +238,11 @@ namespace BT
                                 (JDR.map.allStructures[id + 2] as Room).illustration.Title = ":gem: Salle au Talisman";
                         if (JDR.map.allStructures[id + 1] != null)
                             JDR.map.allStructures[id + 1] = passage;
-                    }
-
+                    }   
                 }
 
-                try { am = new AudioModule((AudioService)Program._services.GetService(typeof(AudioService)), context); ; await am.DoorCloseSFX(); }
+                try { audio = new AudioModule((AudioService)Program._services.GetService(typeof(AudioService)), context); ; await audio.DoorCloseSFX(); }
                 catch (Exception ex) { Console.WriteLine(ex); }
-                await context.Client.StopAsync();
                 await context.Channel.SendMessageAsync("En route vers le passage !");
             }
             else
@@ -259,11 +254,8 @@ namespace BT
 
     class Passage : Structure
     {
-        List<Player> playerOrder;
-        protected int votes;
         public bool isSelected = false;
         public bool isSelectedRandomly = false;
-        protected string name;
         public string GetName()
         {
             return name;

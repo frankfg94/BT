@@ -1,21 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using Discord;
 using Discord.Commands;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
-using System.Threading;
 using System.Drawing;
 using System.Linq;
 using Discord.WebSocket;
 using System.Diagnostics;
-using Discord.Rest;
 
 namespace BT
 {
-   
+
     public class Ping : ModuleBase<SocketCommandContext>
     {
 
@@ -153,6 +150,7 @@ namespace BT
             await ReplyAsync("Suppression de " + amount + " messages");
         }
 
+
         [Command("kill", RunMode = RunMode.Async)]
         public async Task Kill([Remainder] string name)
         {
@@ -218,15 +216,16 @@ namespace BT
             var eb = new EmbedBuilder();
             var eb2 = new EmbedBuilder();
             string desc = ">> Il faut mettre un point d'exclamation en préfixe pour exécuter une commande\n:diamond_shape_with_a_dot_inside: ping: Le bot affiche 'Hello World'(edited)\n:diamond_shape_with_a_dot_inside: qcm: le bot lance un qcm très basique de mathématiques\n: diamond_shape_with_a_dot_inside: qcm2: le bot lance un qcm visuel(edited)\n:diamond_shape_with_a_dot_inside: a: (si client discord.net téléchargé uniquement) ouvre une fenêtre windows\n:diamond_shape_with_a_dot_inside: clean[nb de messages] : permet de supprimer jusqu'à 100 messages dans la conversation actuelle\n:diamond_shape_with_a_dot_inside: dice[n] : Lance un dé possédant n faces(edited)\n:diamond_shape_with_a_dot_inside: rep[a | b | c | d] : Répond à la commande !qcm en sélectionner une des lettres a, b, c ou d\n:diamond_shape_with_a_dot_inside: eb: Envoie un message test d'Embed Builder(edited)\n:diamond_shape_with_a_dot_inside: note[string] : Attribue une note sur 10 à un objet, personne entré en tant que string\n:diamond_shape_with_a_dot_inside: clip1: lance une musique via youtube directement sur le bot\n: diamond_shape_with_a_dot_inside: clip2: lance une musique via un chemin de l'ordinateur directement sur le bot(edited)\n:diamond_shape_with_a_dot_inside: info[id] : Lance le maximum d'informations sur un utilisateur dont l'ID est indiqué en paramètre" +
-                "\n:diamond_shape_with_a_dot_inside: !killAll : Tue tous les utilisateurs du groupe (sauf le MJ)" +
-                "\n:diamond_shape_with_a_dot_inside: !resetN : Remet les pseudos à leur état d'origine" +
-                "\n:diamond_shape_with_a_dot_inside: !bigQcm : crée un qcm appelé 'Premier qcm'" +
+                "\n:diamond_shape_with_a_dot_inside: !init : Lance un JDR dans un temple" +
+                "\n:diamond_shape_with_a_dot_inside: !bigQcm : crée un qcm d'exemple 'a'" +
                 "\n:diamond_shape_with_a_dot_inside: !preview[nom du qcm] : affiche les questions d'un qcm ";
             string desc2 = "\n:diamond_shape_with_a_dot_inside: !start[nom du qcm] : débute un Qcm " +
             "\n:diamond_shape_with_a_dot_inside: !add[nom du qcm] : ajoute une question au Qcm en fin de liste " +
              "\n:diamond_shape_with_a_dot_inside: !addMany[nom du qcm] : ajoute 5 questions au Qcm en fin de liste " +
             "\n:diamond_shape_with_a_dot_inside:  !del[nom du qcm] : supprime la dernière question du Qcm indiqué" +
-            "\n:diamond_shape_with_a_dot_inside:  !deleteQCM[nom du qcm] : c'est définitif" +
+            "\n:diamond_shape_with_a_dot_inside:  !deleteQCM[nom du qcm] : supprimer définitivement un QCM" +
+            "\n:diamond_shape_with_a_dot_inside:  !dice[nom du qcm] : lance un dé à n faces" +
+            "\n:diamond_shape_with_a_dot_inside:  !citation : lance lance une citation au hasard" +
             "\n:diamond_shape_with_a_dot_inside:  !mix[nom du qcm] : mélange les questions d'un qcm ";
 
             eb.WithDescription(desc);
@@ -320,8 +319,9 @@ namespace BT
             Qcm bigQcm = new Qcm();
             qcmList.Add(bigQcm);
             bigQcm.name = name;
+            // l'audio ne marche que si premiere question QUE
             bigQcm.AddQuestion(QType.text);
-            bigQcm.AddQuestion(QType.text,false,Qcm.TextQuestion.DefaultContent);
+           bigQcm.AddQuestion(QType.text,false,Qcm.TextQuestion.DefaultContent);
             bigQcm.AddQuestion(QType.image); // Image multiple
             bigQcm.AddQuestion(QType.image,true); // Image simple
             try { await ReplyAsync("Questions ajoutées avec succès"); }
@@ -483,47 +483,25 @@ namespace BT
         List<IUser> voter = new List<IUser>();
         public async Task ReactionParse(Cacheable<IUserMessage, ulong> msg, ISocketMessageChannel msg2, SocketReaction socketReaction)
         {
-            ///*await*/ ReplyAsync("Pourquoi ce message ne veut-il pas s'envoyer????");
-            ///
-
             await Console.Out.WriteLineAsync("\n----------------------------------------------------------------------\nRéaction détectée!! " + msg.Id);
 
 
             if (qcmList != null)
             {
-                await Console.Out.WriteAsync("\nil existe au moins un QCM... OK");
                 foreach (var qcm in qcmList)
                 {
                     if (qcm.HasStarted)
                     {
-                        await Console.Out.WriteAsync("\nQCM commencé, analyse de la réaction...");
-                        if (qcm.questionsID.Contains(socketReaction.MessageId) )
+                        if (qcm.questionsID.Contains(socketReaction.MessageId) && qcm.questionsID.Last() == msg.Id )
                         {
-                            await Console.Out.WriteAsync("\n --> Ce message appartient au QCM... OK");
                             if (!socketReaction.User.Value.IsBot)
-                            // On empèche le bot de détecter ses propres réactions (quand il affiche les 4 réponses possibles), et si on regarde si le message appartient à la liste des questions
                             {
-                                await Console.Out.WriteAsync("\n --> Cette réaction n'est pas celle d'un bot OK...");
-                                await Console.Out.WriteAsync("Terminée");
                                 qcm.allAnswers.Add(socketReaction);
-                                await Console.Out.WriteLineAsync("\nMessage cliqué appartient à liste des questions -->");
-                                Console.ForegroundColor = ConsoleColor.Green;
-                                Console.Write("True\n");
-                                Console.ForegroundColor = ConsoleColor.White;
-                                await Console.Out.WriteLineAsync("On passe à Q" + i);
                                 await StopAudioCmd();
                                 await StartQCM(qcm.name);
                                 i++;
                             }
-                            else
-                            {
-                                await Console.Out.WriteAsync("\n --> Cette réaction est celle d'un bot ARRET...");
-                            }
-                        }
 
-                        else
-                        {
-                            await Console.Out.WriteAsync("Echec, cette reaction n'appartient pas à un message de QCM");
                         }
                     }
                 }
@@ -548,7 +526,7 @@ namespace BT
                         }
                     }
                 }
-                if (JDR.sacrificeMSGList.Last().Id == msg.Id)
+                if (JDR.sacrificeMsgID.Contains(socketReaction.MessageId))
                 {
                     Console.WriteLine("Détection sacrifice");
                     if (JDR.hasStarted)
@@ -581,7 +559,7 @@ namespace BT
                     }
                   
                 }
-                if (JDR.passageMsgs.Last().Id == msg.Id)
+                if (JDR.passageMsgsID.Contains(msg.Id) )
                 {
 
                     if (JDR.hasStarted)
@@ -614,7 +592,7 @@ namespace BT
 
                 else
                 {
-                    Console.WriteLine(JDR.sacrificeMSGList[0].Id + " | " + msg.Id);
+                    Console.WriteLine(JDR.sacrificeMsgID.Last()+ " | " + msg.Id);
                 }
 
             }
@@ -667,13 +645,25 @@ namespace BT
         [Command("citation",RunMode = RunMode.Async)]
         public async Task DisplayCitation()
         {
-            var lines = File.ReadAllLines("citations.txt");
-            Random r = new Random();
-            var randomLineNumber = r.Next(0,lines.Length -1);
-            EmbedBuilder e = new EmbedBuilder();
-            e.WithTitle("Citation n°"  + randomLineNumber);
-            e.WithDescription(lines[randomLineNumber]);
-            await Context.Channel.SendMessageAsync("", false, e);
+            try
+            {
+                Console.WriteLine("ok");
+                var lines = File.ReadAllLines("./citations.txt");
+                Console.WriteLine("ok1");
+                Random r = new Random();
+                var randomLineNumber = r.Next(0, lines.Length - 1);
+                EmbedBuilder e = new EmbedBuilder();
+                e.WithTitle("Citation n°" + randomLineNumber);
+                e.WithDescription(lines[randomLineNumber]);
+                await Context.Channel.SendMessageAsync("", false, e);
+                Console.WriteLine("ok2");
+            }
+            catch (Exception ex)
+            {
+
+                Console.WriteLine(ex);
+            }
+            
         }
 
         [Command("join", RunMode = RunMode.Async)]
@@ -684,10 +674,20 @@ namespace BT
             await am.JoinCmd();
         }
 
+        [Command("off", RunMode = RunMode.Async)]
+        public async Task ShutDown()
+        {
+            await Context.Channel.SendMessageAsync("A la prochaine !");
+            await Leave();
+            Environment.Exit(0);
+        }
+
+
         [Command("stop", RunMode = RunMode.Async)]
         public async Task StopAudioCmd()
         {
             // await _client.StopAsync();
+            
             if (Process.GetProcessesByName("ffmpeg") != null)
             {
                 foreach (var process in Process.GetProcessesByName("ffmpeg"))
@@ -710,7 +710,20 @@ namespace BT
         //    Room a = new Room();
         //    await a.ChoosePassage(Context);
         //}
+
+            class QcmPlayer
+        {
+            public QcmPlayer(IUser _user)
+            {
+                user = _user;
+            }
+            public IUser user;
+            public int score;
+            public int maxScore;
+        }
+
         AudioModule am;
+        Stopwatch stopwatch = Stopwatch.StartNew();
         static int i = 1;
         [Command("start", RunMode = RunMode.Async)]
         public async Task StartQCM([Remainder] string qcmName)
@@ -723,6 +736,7 @@ namespace BT
             IMessage msg = null;
             if (!qcm.HasStarted)
             {
+                stopwatch.Restart();
                 qcm.HasStarted = true;
                 Console.WriteLine("Affichage Q1" );
                 // Si ça buggue ç'est à cause du display Mode
@@ -737,6 +751,7 @@ namespace BT
                     Console.WriteLine("On arrive à une question de type :" + qcm.questions[i].type);
                     msg = await qcm.DisplayInDiscord(_client.GetChannel(414746672284041222) as ISocketMessageChannel, qcm.questions[i], Qcm.DisplayMode.QCM);
                     qcm.questionsID.Add(msg.Id);
+                    Console.WriteLine(stopwatch.ElapsedMilliseconds);
                 }
                 // Tableau des réponses
                 else
@@ -748,13 +763,63 @@ namespace BT
                         await channel.SendMessageAsync("Réponses enregistrées : " + qcm.allAnswers.Count);
                         EmbedBuilder embed = new EmbedBuilder();
                         int i = 0;
+                        int score = 0;
+                        int maxScore = qcm.allAnswers.Count;
+                        Console.OutputEncoding = System.Text.Encoding.UTF8;
+                        var usersIDThatAnswered = new List<ulong>();
+                        var playerList = new List<QcmPlayer>();
+                        foreach(var ans in qcm.allAnswers)
+                        {
+                            if (!usersIDThatAnswered.Contains(ans.User.Value.Id))
+                            {
+                                usersIDThatAnswered.Add(ans.User.Value.Id);
+                                playerList.Add(new QcmPlayer(ans.User.Value));
+                            }
+
+                        }
                         foreach (var ans in qcm.allAnswers)
                         {
-                            embed.AddField("Votre Réponse " + ans.Emote.Name, " par " + ans.User.Value.Username);
-                            embed.AddField("Bonne réponse ", qcm.questions[i].answer + ":" + qcm.questions[i].answerLetter);
-                            i++;
+
+                            try
+                            {
+                                if(ans.Emote.Name != null)
+                                {
+                                    
+                                    embed.AddField("Votre Réponse n°" + (i + 1) + " : " + ans.Emote.Name, " par " + ans.User.Value.Username);
+                                    foreach(var player in playerList)
+                                    {
+                                        if (ans.Emote.Name == qcm.questions[i].answerLetter && ans.User.Value == player.user)
+                                        {
+                                            player.score++;
+                                        }
+                                        if(ans.User.Value == player.user)
+                                        player.maxScore++;
+                                    }
+                                    embed.AddField("Bonne réponse ", qcm.questions[i].answer + ":" + qcm.questions[i].answerLetter);
+                                    if (ans.Emote.Name == qcm.questions[i].answerLetter)
+                                    {
+                                        score++;    
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine(ans.Emote.Name  + " : " + qcm.questions[i].answerLetter);
+                                    }
+                                }
+
+                                i++;
+                                embed.AddField("", "");
+                            }
+                            catch(Exception ex)
+                            {
+                                Console.WriteLine(ex);
+                            }
                         }
                         await channel.SendMessageAsync("", false, embed);
+                        await channel.SendMessageAsync(" Score Final " + score + " / " +maxScore +"\n Durée : " +(stopwatch.ElapsedMilliseconds/1000)+"s");
+                        foreach(var player in playerList)
+                        {
+                            await channel.SendMessageAsync(">> " + player.user.Username + " Score : "+ player.score +" / " + player.maxScore);
+                        }
                     }
                 }
             }
@@ -822,6 +887,14 @@ namespace BT
                 }
 
             }
+        }
+
+        [Command("leave",RunMode = RunMode.Async)]
+        public async Task Leave()
+        {
+            AudioService audioService = (AudioService)Program._services.GetService(typeof(AudioService));
+            AudioModule am = new AudioModule(audioService, Context);
+            await am.LeaveCmd();
         }
 
         [Command("ping", RunMode = RunMode.Async)]

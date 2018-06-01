@@ -34,7 +34,7 @@ namespace BT
         public static int RoomID = 0;
         public static List<Player> deadPlayers = new List<Player>();
         public static List<Player> allPlayers = new List<Player>();
-        public static List<RestUserMessage> passageMsgs = new List<RestUserMessage>();
+        public static List<ulong> passageMsgsID = new List<ulong>();
         public static int remainingPlayers = 0;
         public static ulong lastPassageMsgID;
         public List<IUser> GetVoiceConnectedUsers()
@@ -193,7 +193,6 @@ namespace BT
         }
 
        
-
         public static async Task Kill(Player p)
         {
             deadPlayers.Add(p);
@@ -215,13 +214,13 @@ namespace BT
             JDR.hasStarted = true;
             await ProposeSacrifice();
            // await (JDR.map.allStructures[0] as Room).ChoosePassage(Context, currentStructureID, map);
-
         }
 
         Random r = new Random();
         [Command("startJDR", RunMode = RunMode.Async)]
         public async Task StartGameAsync()
         {
+            AudioModule am = new AudioModule((AudioService)Program._services.GetService(typeof(AudioService)), Context);
             try
             {
                 if(mainVoiceChannel!=null)
@@ -265,7 +264,7 @@ namespace BT
                     // Parcours des salles
                     for (int id = 0; id < map.allStructures.Count; id++)
                     {
-                       // Thread.Sleep(10000);
+                        // Thread.Sleep(10000);
                         await _context.Channel.SendMessageAsync("On passe à la structure suivante / NOUVELLE ITERATION");
                         Console.WriteLine("Structure actuelle" + id);
                         if (map.allStructures[id].GetType() == typeof(Room) && id != map.allStructures.Count - 1)
@@ -273,7 +272,7 @@ namespace BT
 
                             await ProposeAbilityUse();
                             Console.WriteLine("Sortie de ProposeAbilityUse()");
-                           // Thread.Sleep(10000);
+                            // Thread.Sleep(10000);
                             Console.WriteLine("Pièce de type salle");
 
                             // On montre la salle
@@ -287,10 +286,11 @@ namespace BT
                             // L'esprit Maya demande si on sacrifie un joueur
                             await ProposeSacrifice();
 
-                           Thread.Sleep(10000);
+                            Thread.Sleep(10000);
 
                             // On choisit le passage
-                            await room.ChoosePassage(Context, currentStructureID, map);
+
+                            await room.ChoosePassage(Context, currentStructureID, map, am);
                             currentRoomID++;
                         }
                         else // Sinon on prend le passage
@@ -311,32 +311,29 @@ namespace BT
                                     playerList += " :arrow_right: ";
                             }
                             await ReplyAsync(playerList);
-                            if(pass.allTraps.Count > 0)
+                            if (pass.allTraps.Count > 0)
                             {
                                 await ReplyAsync(":skull: Vous avez repéré " + pass.allTraps.Count + " piège pour ce passage");
                                 foreach (var trap in pass.allTraps)
                                 {
-                                    await trap.ShowIllustration(Context);                                    
+                                    await trap.ShowIllustration(Context);
                                     for (int i = 0; i < randomizedPlayers.Count; i++)
                                     {
-                                        await ReplyAsync((i +1)+ " ) " + randomizedPlayers[i].user.Username + " passe à travers le piège...");
+                                        await ReplyAsync((i + 1) + " ) " + randomizedPlayers[i].user.Username + " passe à travers le piège...");
                                         await trap.PlayerWalkOnMe(randomizedPlayers[i], Context);
-                                        if(deadPlayers.Contains(randomizedPlayers[i]))
+                                        if (deadPlayers.Contains(randomizedPlayers[i]))
                                         {
                                             await ReplyAsync(randomizedPlayers[i].user.Mention + " vient de mourrir !!\n :information_source:  Le piège est maintenant désactivé");
                                         }
-                                        if(randomizedPlayers.Count == 0)
+                                        if (randomizedPlayers.Count == 0)
                                         {
-                                            await ReplyAsync("JDR terminé, tout le monde est mort"); 
+                                            await ReplyAsync("JDR terminé, tout le monde est mort");
                                         }
                                     }
                                 }
-
                             }
-
                         }
                         currentStructureID++;
-
                     }
 
                     // Sortie du batiment
@@ -352,7 +349,7 @@ namespace BT
                         await ReplyAsync("Tableau récapitulatif", false, eb);
                         var jdrPlayers = new List<Player>() ;
                         List<Player> deadAndAlivePlayers = new List<Player>();
-                        deadAndAlivePlayers=   Enumerable.Union(allPlayers,deadPlayers).ToList();
+                        deadAndAlivePlayers =   Enumerable.Union(allPlayers,deadPlayers).ToList();
                     }
                 }
                 else
@@ -402,11 +399,10 @@ namespace BT
                         }
                     }
                 }
-
             }
         }
 
-        public static List<IUserMessage> sacrificeMSGList = new List<IUserMessage>();
+        public static List<ulong> sacrificeMsgID = new List<ulong>();
         public async Task ProposeSacrifice()
         {
             Console.WriteLine("Entrée Message sacrifice ");
@@ -414,8 +410,10 @@ namespace BT
             b.Title = ("Souhaitez vous sacrifier un des aventuriers?");
             for (int i = 0; i < allPlayers.Count; i++)
                 b.Description += "\n" + allPlayers[i].user.Username + "\n";
-            
+
             var msg = await ReplyAsync("", false, b);
+            sacrificeMsgID.Add(msg.Id);
+
 
             Console.WriteLine("nb joueurs: " + allPlayers.Count);
 
@@ -435,8 +433,7 @@ namespace BT
                 else if (i == 6)
                     await msg.AddReactionAsync(new Emoji("🇫"));
             }
-            sacrificeMSGList.Add(msg);
-
+            Console.WriteLine("ajout à la liste sacrifice de" + msg.Id);
             await Task.Delay(5000);
             Console.WriteLine("Fin du délai");
 
@@ -452,9 +449,11 @@ namespace BT
             }
             try
             {
-                await ReplyAsync(playerToSacrifice.user.Mention + " a été sacrifié car possédant le plus de votes de sacrifice !!");
                 if (playerToSacrifice != null)
+                {
+                    await ReplyAsync(playerToSacrifice.user.Mention + " a été sacrifié car possédant le plus de votes de sacrifice !!");
                     await Kill(playerToSacrifice);
+                }
             }
             catch(Exception ex)
             {
@@ -468,6 +467,9 @@ namespace BT
 
             var bot = Context.User;
             Player p = new Player(CharacterType.CaraLoft, await Context.Channel.GetUserAsync(322421524319567882), Context);
+            Player p1 = new Player(CharacterType.FBI_Inspector, await Context.Channel.GetUserAsync(181134438061703168), Context);
+            Player p2 = new Player(CharacterType.SerialKiller, await Context.Channel.GetUserAsync(368075521558446081), Context);
+
             try
             {
                 foreach (var user in Context.Guild.Users)

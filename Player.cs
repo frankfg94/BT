@@ -195,41 +195,35 @@ namespace BT
         private void AssignGoalAndAbilities()
         {
             Console.WriteLine("Entrée AssignGoalAndAbilities() ");
+            Ability ability  = new Ability(Ability.ID.PrepareSurvival, Ability.UsageType.Single, this);
             switch (_type)
             {
                 case CharacterType.CaraLoft:
                     goal = Goal.FindTalismans;
-                    var ability = new Ability(Ability.ID.PrepareSurvival, Ability.UsageType.Single,this);                       
-                    abilities.Add(ability);
+                    ability = new Ability(Ability.ID.PrepareSurvival, Ability.UsageType.Single,this);                       
                     break;
                 case CharacterType.FBI_Inspector:
                     goal = Goal.Kill.SerialKiller;
-                    var ability2 = new Ability(Ability.ID.ShowFBICard, Ability.UsageType.Single,this);
-                    abilities.Add(ability2);
+                    ability = new Ability(Ability.ID.ShowFBICard, Ability.UsageType.Single,this);
                     break;
                 case CharacterType.MayaSpirit:
-                    var abilityS = new Ability(Ability.ID.ActivateTrap, Ability.UsageType.ForEachRoom);
-                    abilities.Add(abilityS);
+                     ability = new Ability(Ability.ID.ActivateTrap, Ability.UsageType.ForEachRoom);
                     goal = Goal.Protect.Maya;
                     break;
                 case CharacterType.MayaSucessor:
-                    var ability3 = new Ability(Ability.ID.ActivateTrap, Ability.UsageType.Single);
-                    abilities.Add(ability3);
+                    ability = new Ability(Ability.ID.ActivateTrap, Ability.UsageType.Single);
                     goal = Goal.Protect.Talismans;
                     break;
                 case CharacterType.NaziSoldier:
-                    var ability4 = new Ability(Ability.ID.SecretConversation, Ability.UsageType.Single);
-                    abilities.Add(ability4);
+                    ability = new Ability(Ability.ID.SecretConversation, Ability.UsageType.Single);
                     goal = Goal.Kill.CaraLoft;
                     break;
                 case CharacterType.SerialKiller:
-                    var ability5 = new Ability(Ability.ID.PushInTrap, Ability.UsageType.ForEachRoom);
-                    abilities.Add(ability5);
+                    ability = new Ability(Ability.ID.PushInTrap, Ability.UsageType.ForEachRoom);
                     goal = Goal.Kill.Tourist;
                     break;
                 case CharacterType.Tourist:
-                    var ability6 = new Ability(Ability.ID.RevealTrap, Ability.UsageType.Single,this);
-                    abilities.Add(ability6);
+                    ability = new Ability(Ability.ID.RevealTrap, Ability.UsageType.Single,this);
                     goal = Goal.ExitTemple;
                     break;
                 default:
@@ -238,7 +232,7 @@ namespace BT
 
             }
             Console.WriteLine("Sortie AssignGoalAndAbilities() ");
-
+            abilities.Add(ability);
         }
 
 
@@ -363,7 +357,6 @@ namespace BT
                 //      perm = perm.Value.Modify(null,null,null,PermValue.Deny);
                 //await ch.AddPermissionOverwriteAsync(SelectRole("@everyone"), perm.Value);
             }
-
         }
 
         

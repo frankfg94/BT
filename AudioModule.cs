@@ -19,6 +19,12 @@ public class AudioModule : ModuleBase<ICommandContext>
     private SocketCommandContext commandContext ;
     // Remember to add an instance of the AudioService
     // to your IServiceCollection when you initialize your botx
+
+    ~AudioModule()
+    {
+        LeaveCmd();
+    }
+
     public AudioModule(AudioService service, SocketCommandContext cm = null)
     {
         commandContext = (SocketCommandContext)service.Context;
@@ -123,10 +129,13 @@ public class AudioModule : ModuleBase<ICommandContext>
     // Remember to add preconditions to your commands,
     // this is merely the minimal amount necessary.
     // Adding more commands of your own is also encouraged.
-    [Command("leave", RunMode = RunMode.Async)]
     public async Task LeaveCmd()
     {
-        await _service.LeaveAudio(Context.Guild);
+        if (commandContext == null)
+            await _service.LeaveAudio(Context.Guild);
+        else
+            await _service.LeaveAudio(commandContext.Guild);
+
     }
 
     [Command("play", RunMode = RunMode.Async)]

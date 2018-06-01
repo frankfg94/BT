@@ -32,19 +32,19 @@ public class AudioService : ModuleBase<ICommandContext>
 
             if (channel == null)
             {
-                Console.WriteLine("You need to be in a voice channel, or pass one as an argument.");
+                Console.WriteLine("Aucune chaîne n'a été trouvée");
                 return;
             }
             
         
             IAudioClient audioClient = await channel.ConnectAsync();
-
             if (ConnectedChannels.TryAdd(guild.Id, audioClient))
             {
-                // If you add a method to log happenings from this service,
-                // you can uncomment these commented lines to make use of that.
-                //Console.WriteLine("Connected to voice on {0}.", guild.Name);
                 Console.WriteLine(" La connexion été effectuée sur " + guild.Name);
+            }
+            else
+            {
+                await ReplyAsync("Connexion echouée");
             }
 
             Console.WriteLine("\n------------------------CONNEXION CHANNEL AUDIO-----------------------------------------\n");
@@ -63,12 +63,14 @@ public class AudioService : ModuleBase<ICommandContext>
 
     public async Task LeaveAudio(IGuild guild)
     {
-        if (ConnectedChannels.TryRemove(guild.Id, out IAudioClient client))
+        IAudioClient client;
+        if (ConnectedChannels.TryRemove(guild.Id, out  client))
         {
             await client.StopAsync();
-            //await Log(LogSeverity.Info, $"Disconnected from voice on {guild.Name}.");
+            await Console.Out.WriteLineAsync(">> Audio déconnecté");
         }
     }
+
 
     public void StopAudio()
     {
@@ -89,14 +91,6 @@ public class AudioService : ModuleBase<ICommandContext>
             return;
         }
 
-        //var ffmpegProc = Process.GetProcessesByName("ffmpeg");
-        //if (ffmpegProc.Length > 0)
-        //{
-        //    foreach (var p in ffmpegProc)
-        //    {
-        //        p.Kill();
-        //    }
-        //}
         
         if (ConnectedChannels.TryGetValue(guild.Id, out IAudioClient client))
         {
@@ -131,8 +125,6 @@ public class AudioService : ModuleBase<ICommandContext>
     private Process CreateStream(string path)
     {
        Console.WriteLine("Création d'un stream {" + path+ "}");
-       // System.Diagnostics.Process.Start(path); 
-       // Cette ligne sert à montrer que le système de path est correct
         return Process.Start(new ProcessStartInfo
         {
             FileName = "ffmpeg.exe",
